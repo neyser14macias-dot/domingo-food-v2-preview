@@ -1607,6 +1607,39 @@
       }
     }
 
+
+    /* V2: carrito cómodo en celulares; cambios solo de presentación. */
+    @media (max-width: 600px) {
+      html { scroll-padding-bottom: 115px; }
+      body { padding-bottom: calc(175px + env(safe-area-inset-bottom)); }
+      main { padding-bottom: 28px; }
+      .nav-inferior {
+        width: min(292px, calc(100% - 44px));
+        padding: 4px;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        box-shadow: 0 10px 26px #00000065;
+      }
+      .nav-interior { gap: 4px; }
+      .nav-indicador { width: calc((100% - 4px) / 2); }
+      .nav-interior[data-active="carrito"] .nav-indicador { transform: translate3d(calc(100% + 4px), 0, 0); }
+      .nav-boton { min-height: 44px; gap: 6px; font-size: 12px; }
+      .nav-icono { font-size: 17px; }
+      .carrito-layout { gap: 14px; margin-bottom: 45px; }
+      #vista-carrito .panel { padding: 16px; min-width: 0; }
+      .fila-carrito { align-items: stretch; flex-direction: column; gap: 10px; padding: 16px 0; }
+      .fila-carrito > div:first-child { min-width: 0; overflow-wrap: anywhere; }
+      .controles-cantidad { justify-content: flex-start; flex-wrap: wrap; gap: 9px; }
+      .boton-cantidad, .boton-eliminar-item { width: 44px; height: 44px; }
+      .cantidad { min-width: 28px; }
+      .acciones-carrito { display: flex; flex-wrap: wrap; gap: 10px; }
+      .acciones-carrito > button { flex: 1 1 145px; min-height: 44px; }
+      #vista-carrito input, #vista-carrito select, #vista-carrito textarea { scroll-margin-bottom: 145px; }
+      #vista-carrito .panel:last-child { margin-bottom: 35px; }
+    }
+    @media (max-width: 370px) {
+      .nav-inferior { width: min(270px, calc(100% - 34px)); }
+      #vista-carrito .panel { padding: 13px; }
+    }
     /* Modal de Login de Administrador */
     .modal-fondo {
       position: fixed;
