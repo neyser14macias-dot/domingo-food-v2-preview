@@ -1640,6 +1640,34 @@
       .nav-inferior { width: min(270px, calc(100% - 34px)); }
       #vista-carrito .panel { padding: 13px; }
     }
+
+    /* V2: navegación móvil adaptada al teclado y formulario accesible. */
+    @media (max-width: 600px) {
+      html { scroll-padding-bottom: 160px; }
+      body { padding-bottom: calc(230px + env(safe-area-inset-bottom)); }
+      .nav-inferior {
+        width: min(244px, calc(100% - 52px));
+        padding: 3px;
+        bottom: calc(5px + env(safe-area-inset-bottom));
+      }
+      .nav-interior { gap: 3px; }
+      .nav-indicador { width: calc((100% - 3px) / 2); }
+      .nav-interior[data-active="carrito"] .nav-indicador { transform: translate3d(calc(100% + 3px), 0, 0); }
+      .nav-boton { min-height: 40px; gap: 4px; font-size: 11px; }
+      .nav-icono { font-size: 16px; }
+      #vista-carrito { padding-bottom: 90px; }
+      #vista-carrito .carrito-layout { margin-bottom: 60px; }
+      #formulario-pedido { padding-bottom: 35px; }
+      #formulario-pedido input, #formulario-pedido select,
+      #formulario-pedido textarea, #formulario-pedido button {
+        scroll-margin-block: 90px 170px;
+      }
+    }
+    @media (max-width: 600px) and (max-height: 530px) {
+      .nav-inferior { display: none; }
+    }
+
+    .nav-inferior.nav-teclado-oculto { display: none; }
     /* Modal de Login de Administrador */
     .modal-fondo {
       position: fixed;
@@ -4111,5 +4139,35 @@
     document.getElementById("boton-whatsapp").textContent = "Pedidos deshabilitados en la vista previa";
   </script>
 
+
+  <script>
+    /* Al abrir el teclado, deja libre el formulario y desplaza el campo enfocado. */
+    (() => {
+      const nav = document.querySelector(".nav-inferior");
+      const form = document.getElementById("formulario-pedido");
+      if (!nav || !form) return;
+      const viewport = window.visualViewport;
+      const actualizar = () => {
+        const movil = window.matchMedia("(max-width: 600px)").matches;
+        const teclado = movil && viewport && (window.innerHeight - viewport.height - viewport.offsetTop > 120);
+        const editando = movil && form.contains(document.activeElement) &&
+          /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+        nav.classList.toggle("nav-teclado-oculto", Boolean(teclado || editando));
+      };
+      form.addEventListener("focusin", () => {
+        actualizar();
+        const campo = document.activeElement;
+        requestAnimationFrame(() => {
+          if (form.contains(campo) && campo.scrollIntoView) {
+            campo.scrollIntoView({ block: "center", behavior: "instant" });
+          }
+        });
+      });
+      form.addEventListener("focusout", () => requestAnimationFrame(actualizar));
+      if (viewport) { viewport.addEventListener("resize", actualizar); viewport.addEventListener("scroll", actualizar); }
+      window.addEventListener("resize", actualizar);
+      actualizar();
+    })();
+  </script>
 </body>
 </html>
