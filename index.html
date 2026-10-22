@@ -1,0 +1,4082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111210">
+  <title>Domingo Food | Pide algo rico</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111210;
+      --surface: #1b1c19;
+      --surface-raised: #22231f;
+      --line: #30312c;
+      --text: #f5f4ed;
+      --muted: #a09f94;
+      --yellow: #f5c842;
+      --yellow-hover: #ffda63;
+      --green: #91c889;
+      --danger: #f17f73;
+      --radius: 22px;
+      --shadow: 0 16px 45px #00000042;
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+      background:
+        radial-gradient(ellipse at 82% -12%, #f5c84213, transparent 36rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 3px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .contenedor {
+      width: min(1160px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .barra {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid #ffffff0c;
+      background: #111210eF;
+      backdrop-filter: blur(18px);
+    }
+
+    .barra-interior {
+      display: flex;
+      min-height: 76px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .barra-acciones {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .marca {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 850;
+      letter-spacing: -0.5px;
+    }
+
+    .marca-icono {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border-radius: 14px;
+      background: var(--yellow);
+      color: #191811;
+      font-size: 22px;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      min-width: 0;
+      min-height: calc(100vh - 186px);
+      padding-top: 30px;
+    }
+
+    .vista {
+      grid-area: 1 / 1;
+      width: 100%;
+      min-width: 0;
+      align-self: start;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity 190ms ease,
+        transform 280ms var(--spring);
+    }
+
+    .vista.saliendo {
+      opacity: 0;
+      transform: translate3d(-12px, 0, 0);
+      pointer-events: none;
+    }
+
+    .vista.entrando {
+      opacity: 0;
+      transform: translate3d(12px, 0, 0);
+      pointer-events: none;
+    }
+
+    .bienvenida {
+      display: grid;
+      grid-template-columns: 1.04fr 0.96fr;
+      min-height: 330px;
+      overflow: hidden;
+      border: 1px solid #ffffff12;
+      border-radius: 30px;
+      background: linear-gradient(120deg, #23231d, #191a17 56%, #30291a);
+      box-shadow: var(--shadow);
+    }
+
+    .bienvenida-texto {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: clamp(28px, 5vw, 58px);
+    }
+
+    .eyebrow {
+      margin-bottom: 13px;
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    .bienvenida h1 {
+      max-width: 480px;
+      margin-bottom: 13px;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 0.99;
+      letter-spacing: -0.065em;
+    }
+
+    .bienvenida-texto > p {
+      max-width: 420px;
+      margin-bottom: 23px;
+      color: #c1c0b6;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .bienvenida-imagen {
+      position: relative;
+      min-height: 280px;
+    }
+
+    .bienvenida-imagen::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #23231d 0%, #23231d12 37%, #1112100a 100%);
+      content: "";
+    }
+
+    .bienvenida-imagen img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .boton {
+      display: inline-flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--yellow);
+      color: #1b1a14;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 850;
+      transition: background 150ms ease, transform 150ms ease;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .boton:hover {
+      transform: translateY(-1px);
+      background: var(--yellow-hover);
+    }
+
+    .boton:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      transform: none;
+    }
+
+    .boton-secundario {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface-raised);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .boton-secundario:hover {
+      border-color: #55554a;
+      background: #292a25;
+    }
+
+    .seccion {
+      margin-top: 37px;
+      scroll-margin-bottom: 125px;
+    }
+
+    .seccion-cabecera {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 17px;
+    }
+
+    .seccion-cabecera h2,
+    .titulo-vista {
+      margin-bottom: 0;
+      font-size: clamp(23px, 3vw, 29px);
+      letter-spacing: -0.045em;
+    }
+
+    .seccion-cabecera p {
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .estado-firestore {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: -4px 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .estado-firestore::before {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: currentColor;
+      content: "";
+    }
+
+    .estado-firestore[data-estado="conectado"] {
+      color: var(--green);
+    }
+
+    .estado-firestore[data-estado="error"] {
+      color: var(--danger);
+    }
+
+    .estado-firestore[data-estado="cargando"]::before {
+      animation: estado-pulso 1.2s ease-in-out infinite;
+    }
+
+    @keyframes estado-pulso {
+      50% { opacity: 0.35; }
+    }
+
+    .reintentar-firestore {
+      min-height: 30px;
+      padding-inline: 10px;
+      font-size: 11px;
+    }
+
+    .filtros {
+      display: flex;
+      gap: 9px;
+      overflow-x: auto;
+      padding: 2px 2px 12px;
+      scroll-margin-bottom: 125px;
+      scrollbar-width: thin;
+    }
+
+    .filtro {
+      flex: 0 0 auto;
+      min-height: 38px;
+      padding: 0 15px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--surface);
+      color: #cecdc2;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .filtro[aria-pressed="true"] {
+      border-color: var(--yellow);
+      background: var(--yellow);
+      color: #1b1a14;
+    }
+
+    .buscador {
+      position: relative;
+      display: flex;
+      width: min(100%, 390px);
+      align-items: center;
+    }
+
+    .buscador-icono {
+      position: absolute;
+      left: 14px;
+      color: var(--muted);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .buscador input,
+    .campo input,
+    .campo select,
+    .campo textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .campo textarea {
+      min-height: 72px;
+      padding: 10px 13px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .buscador input {
+      padding-left: 42px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #828177;
+    }
+
+    .rejilla-productos {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .tarjeta-producto {
+      overflow: hidden;
+      border: 1px solid #ffffff10;
+      border-radius: var(--radius);
+      background: var(--surface);
+      transition: transform 220ms var(--spring), border-color 180ms ease;
+    }
+
+    .tarjeta-skeleton {
+      pointer-events: none;
+    }
+
+    .skeleton-bloque {
+      background: linear-gradient(100deg, var(--surface-raised) 25%, #34352f 42%, var(--surface-raised) 62%);
+      background-size: 200% 100%;
+      animation: skeleton-brillo 1.5s ease-in-out infinite;
+    }
+
+    @keyframes skeleton-brillo {
+      to { background-position-x: -200%; }
+    }
+
+    .skeleton-imagen {
+      height: 206px;
+    }
+
+    .skeleton-contenido {
+      padding: 16px 17px 15px;
+    }
+
+    .skeleton-linea {
+      height: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+
+    .skeleton-linea-categoria {
+      width: 34%;
+      height: 8px;
+      margin-bottom: 13px;
+    }
+
+    .skeleton-linea-nombre {
+      width: 68%;
+      height: 17px;
+    }
+
+    .skeleton-linea-descripcion {
+      width: 92%;
+    }
+
+    .skeleton-linea-descripcion-corta {
+      width: 58%;
+      margin-bottom: 0;
+    }
+
+    .skeleton-pie {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 17px 17px;
+    }
+
+    .skeleton-precio {
+      width: 28%;
+      height: 20px;
+      border-radius: 6px;
+    }
+
+    .skeleton-boton {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+    }
+
+    .tarjeta-producto:hover {
+      transform: translateY(-3px);
+      border-color: #f5c84266;
+    }
+
+    .producto-abrir {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .producto-imagen {
+      display: block;
+      width: 100%;
+      height: 206px;
+      object-fit: cover;
+      background: var(--surface-raised);
+      transition: transform 500ms var(--spring);
+    }
+
+    .tarjeta-producto:hover .producto-imagen {
+      transform: scale(1.025);
+    }
+
+    .producto-contenido {
+      min-width: 0;
+      padding: 16px 17px 17px;
+    }
+
+    .producto-categoria {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--yellow);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .producto-nombre {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .producto-descripcion {
+      display: -webkit-box;
+      min-height: 38px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .producto-pie {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .producto-no-disponible {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .precio {
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .agregar-rapido {
+      display: grid;
+      width: 39px;
+      height: 39px;
+      place-items: center;
+      border: 0;
+      border-radius: 13px;
+      background: var(--yellow);
+      color: #191811;
+      cursor: pointer;
+      font-size: 23px;
+      font-weight: 700;
+    }
+
+    .agregar-rapido:hover {
+      background: var(--yellow-hover);
+    }
+
+    .sin-resultados {
+      grid-column: 1 / -1;
+      padding: 30px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .titulo-con-retorno {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 14px 0 22px;
+    }
+
+    .titulo-vista {
+      margin: 0;
+    }
+
+    .boton-atras {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .detalle {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      overflow: hidden;
+      border: 1px solid #ffffff12;
+      border-radius: 28px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .detalle-imagen {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 440px;
+      object-fit: cover;
+      background: var(--surface-raised);
+    }
+
+    .detalle-contenido {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: clamp(24px, 5vw, 50px);
+    }
+
+    .detalle-contenido h2 {
+      margin: 5px 0 12px;
+      font-size: clamp(30px, 4vw, 43px);
+      letter-spacing: -0.06em;
+    }
+
+    .detalle-descripcion {
+      margin-bottom: 24px;
+      color: #bcbbb1;
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .detalle-precio {
+      margin-top: auto;
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 850;
+    }
+
+    .detalle-contenido .boton {
+      width: 100%;
+      min-height: 52px;
+    }
+
+    .carrito-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.8fr);
+      align-items: start;
+      gap: 20px;
+      margin: 14px 0 34px;
+    }
+
+    .panel {
+      padding: 23px;
+      border: 1px solid #ffffff12;
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .panel h2 {
+      margin-bottom: 5px;
+      font-size: 20px;
+      letter-spacing: -0.035em;
+    }
+
+    .panel-subtitulo {
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    #carrito {
+      min-height: 46px;
+    }
+
+    .carrito-vacio {
+      padding: 18px 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .fila-carrito {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .articulo-nombre {
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: 760;
+    }
+
+    .articulo-precio {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .controles-cantidad {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .boton-cantidad {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-raised);
+      color: var(--yellow);
+      cursor: pointer;
+      font-size: 20px;
+      transition: transform 150ms var(--spring), background 150ms ease;
+    }
+
+    .boton-cantidad:active {
+      transform: scale(0.88);
+    }
+
+    .cantidad {
+      min-width: 16px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .boton-eliminar-item {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      margin-left: 2px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: transparent;
+      color: #9c9a8f;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      transition: color 150ms ease, background 150ms ease, border-color 150ms ease, transform 150ms var(--spring);
+    }
+
+    .boton-eliminar-item:hover {
+      color: var(--danger);
+      background: #e76f5115;
+      border-color: #e76f5135;
+    }
+
+    .boton-eliminar-item:active {
+      transform: scale(0.9);
+    }
+
+    .resumen-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .resumen-total strong {
+      color: var(--yellow);
+      font-size: 25px;
+      letter-spacing: -0.04em;
+    }
+
+    .acciones-carrito {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .formulario {
+      display: grid;
+      gap: 13px;
+    }
+
+    .admin-intro {
+      margin: 14px 0 20px;
+    }
+
+    .demo-aviso {
+      margin: 16px 0 23px;
+      padding: 15px 17px;
+      border: 1px solid #f5c84235;
+      border-radius: 15px;
+      background: #f5c8420d;
+      color: #e6d9ad;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .admin-lista {
+      display: grid;
+      gap: 12px;
+    }
+
+    .admin-producto {
+      display: grid;
+      grid-template-columns: 90px minmax(0, 1fr);
+      gap: 17px;
+      padding: 16px;
+      border: 1px solid #ffffff12;
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .admin-producto-col-imagen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      width: 90px;
+    }
+
+    .admin-imagen-wrapper {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 13px;
+      overflow: hidden;
+      background: var(--surface-raised);
+    }
+
+    .admin-imagen-wrapper .admin-producto-imagen,
+    .admin-producto-imagen {
+      width: 90px;
+      height: 90px;
+      border-radius: 13px;
+      object-fit: cover;
+      background: var(--surface-raised);
+      display: block;
+    }
+
+    .admin-imagen-overlay-carga {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: #111210d9;
+      backdrop-filter: blur(3px);
+      color: var(--yellow);
+      font-size: 10.5px;
+      font-weight: 800;
+      text-align: center;
+      padding: 4px;
+      z-index: 2;
+    }
+
+    .boton-cambiar-foto {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      min-height: 28px;
+      padding: 0 6px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface-raised);
+      color: #deddd4;
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+      text-align: center;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    .boton-cambiar-foto:hover {
+      background: #2b2c26;
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .boton-cambiar-foto.deshabilitado {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .admin-producto-campos {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .admin-producto-campos .campo:first-child,
+    .admin-producto-campos .campo:nth-child(4) {
+      grid-column: 1 / -1;
+    }
+
+    .admin-producto-acciones {
+      display: flex;
+      grid-column: 1 / -1;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .disponible-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #deddd4;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .disponible-control input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--yellow);
+    }
+
+    .admin-agregar {
+      margin-top: 20px;
+    }
+
+    .admin-agregar > summary {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding: 0 16px;
+      border-radius: 13px;
+      background: var(--yellow);
+      color: #1b1a14;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 850;
+      list-style: none;
+    }
+
+    .admin-agregar > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .admin-agregar[open] > summary {
+      margin-bottom: 14px;
+    }
+
+    .admin-agregar-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 18px;
+      border: 1px solid #ffffff12;
+      border-radius: 17px;
+      background: var(--surface);
+    }
+
+    .admin-agregar-form .campo:nth-child(3),
+    .admin-agregar-form .campo:nth-child(4),
+    .admin-agregar-form .campo:nth-child(5),
+    .admin-agregar-form > button {
+      grid-column: 1 / -1;
+    }
+
+    .admin-estado {
+      min-height: 22px;
+      margin: 14px 0 0;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    /* Estilos para el sistema de subida de imágenes con Cloudinary */
+    .subida-imagen-bloque {
+      display: grid;
+      gap: 10px;
+    }
+
+    .subida-preview-caja {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 110px;
+      height: 110px;
+      border: 1px solid #ffffff1c;
+      border-radius: 16px;
+      background: var(--surface-raised);
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .subida-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .subida-preview-quitar {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: #111210d4;
+      color: #ff9b91;
+      font-size: 12px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 150ms ease, transform 150ms ease;
+    }
+
+    .subida-preview-quitar:hover {
+      background: var(--danger);
+      color: #fff;
+      transform: scale(1.08);
+    }
+
+    .subida-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .boton-subir-archivo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 16px;
+      border: 1px dashed var(--yellow);
+      border-radius: 12px;
+      background: #f5c84210;
+      color: var(--yellow);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+      transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+
+    .boton-subir-archivo:hover {
+      background: #f5c84222;
+      border-style: solid;
+      transform: translateY(-1px);
+    }
+
+    .boton-subir-archivo.deshabilitado {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .subida-separador {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .subida-progreso {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 13px;
+      border: 1px solid #f5c84240;
+      border-radius: 11px;
+      background: #f5c84214;
+      color: #ffde7a;
+      font-size: 12.5px;
+      animation: fadeIn 180ms ease;
+    }
+
+    .subida-spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid #f5c84240;
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: girar 700ms linear infinite;
+    }
+
+    @keyframes girar {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .subida-error {
+      padding: 10px 13px;
+      border: 1px solid #f17f7355;
+      border-radius: 11px;
+      background: #f17f731c;
+      color: #ff9b91;
+      font-size: 12.5px;
+      line-height: 1.45;
+      word-break: break-word;
+      animation: fadeIn 180ms ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .campo {
+      display: grid;
+      gap: 7px;
+    }
+
+    .campo label {
+      color: #deddd4;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .campo select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #b9b8ad 50%), linear-gradient(135deg, #b9b8ad 50%, transparent 50%);
+      background-position: calc(100% - 17px) 19px, calc(100% - 12px) 19px;
+      background-repeat: no-repeat;
+      background-size: 5px 5px, 5px 5px;
+      padding-right: 34px;
+    }
+
+    .ayuda {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .boton-whatsapp {
+      width: 100%;
+      min-height: 49px;
+      margin-top: 2px;
+    }
+
+    .pie {
+      padding: 18px 0 26px;
+      color: #828177;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .nav-inferior {
+      position: fixed;
+      z-index: 10;
+      right: 50%;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      left: auto;
+      display: flex;
+      justify-content: center;
+      width: min(360px, calc(100% - 32px));
+      padding: 6px;
+      transform: translateX(50%);
+      border: 1px solid #ffffff29;
+      border-radius: 999px;
+      background:
+        linear-gradient(145deg, #ffffff17, #ffffff06 48%, #ffffff0d),
+        #2425208c;
+      box-shadow:
+        0 18px 48px #00000070,
+        0 3px 12px #00000035,
+        inset 0 1px 0 #ffffff35,
+        inset 0 -1px 0 #ffffff08;
+      -webkit-backdrop-filter: blur(28px) saturate(175%);
+      backdrop-filter: blur(28px) saturate(175%);
+      isolation: isolate;
+    }
+
+    .nav-interior {
+      position: relative;
+      display: grid;
+      width: 100%;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .nav-indicador {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: calc((100% - 8px) / 2);
+      border: 1px solid #ffffff20;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #ffffff1c, #ffffff08);
+      box-shadow:
+        0 2px 10px #00000024,
+        inset 0 1px 0 #ffffff30;
+      transform: translate3d(0, 0, 0);
+      transition: transform 520ms var(--spring);
+      pointer-events: none;
+    }
+
+    .nav-interior[data-active="carrito"] .nav-indicador {
+      transform: translate3d(calc(100% + 8px), 0, 0);
+    }
+
+    .nav-boton {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+      transition: color 220ms ease, transform 180ms var(--spring);
+    }
+
+    .nav-boton[aria-current="page"] {
+      color: var(--text);
+    }
+
+    .nav-icono {
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    .contador-carrito {
+      display: grid;
+      min-width: 19px;
+      height: 19px;
+      place-items: center;
+      padding-inline: 5px;
+      border-radius: 99px;
+      background: var(--yellow);
+      color: #191811;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .contador-carrito.bump {
+      animation: contador-bump 280ms var(--spring);
+    }
+
+    @keyframes contador-bump {
+      50% { transform: scale(1.2); }
+    }
+
+    .fila-carrito {
+      animation: fila-entrada 180ms ease both;
+    }
+
+    @keyframes fila-entrada {
+      from { opacity: 0.65; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 761px) {
+      body {
+        padding-bottom: calc(100px + env(safe-area-inset-bottom));
+      }
+    }
+
+    @media (max-width: 800px) {
+      .rejilla-productos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .carrito-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .contenedor {
+        width: calc(100% - 28px);
+      }
+
+      .barra-interior {
+        min-height: 65px;
+      }
+
+      .barra-acciones .boton-secundario {
+        min-height: 38px;
+        padding-inline: 10px;
+        font-size: 11px;
+      }
+
+      main {
+        padding-top: 18px;
+      }
+
+      .bienvenida {
+        grid-template-columns: 1fr;
+        border-radius: 24px;
+      }
+
+      .bienvenida-texto {
+        padding: 27px 23px 24px;
+      }
+
+      .bienvenida h1 {
+        max-width: 410px;
+        font-size: clamp(39px, 11vw, 52px);
+      }
+
+      .bienvenida-texto > p {
+        font-size: 14px;
+      }
+
+      .bienvenida-imagen {
+        min-height: 195px;
+        max-height: 220px;
+      }
+
+      .bienvenida-imagen::after {
+        background: linear-gradient(180deg, #23231d18, transparent 35%);
+      }
+
+      .seccion {
+        margin-top: 28px;
+      }
+
+      .seccion-cabecera {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .buscador {
+        width: 100%;
+      }
+
+      .rejilla-productos {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .tarjeta-producto {
+        display: grid;
+        grid-template-columns: 39% minmax(0, 1fr);
+        align-items: stretch;
+      }
+
+      .skeleton-imagen {
+        height: auto;
+        min-height: 165px;
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .skeleton-contenido {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 13px 14px 4px;
+      }
+
+      .skeleton-pie {
+        grid-column: 2;
+        grid-row: 2;
+        padding: 0 14px 12px;
+      }
+
+      .producto-abrir {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 13px 14px 4px;
+      }
+
+      .producto-imagen {
+        height: 165px;
+        min-height: 165px;
+        grid-column: 1;
+        grid-row: 1 / 3;
+      }
+
+      .producto-contenido {
+        padding: 0;
+      }
+
+      .producto-categoria {
+        display: none;
+      }
+
+      .producto-descripcion {
+        min-height: 0;
+        margin-bottom: 8px;
+        font-size: 11px;
+      }
+
+      .producto-pie {
+        grid-column: 2;
+        grid-row: 2;
+        padding: 0 14px 13px;
+      }
+
+      .producto-nombre {
+        font-size: 16px;
+      }
+
+      .agregar-rapido {
+        width: 35px;
+        height: 35px;
+      }
+
+      .detalle {
+        grid-template-columns: 1fr;
+        border-radius: 23px;
+      }
+
+      .detalle-imagen {
+        height: 260px;
+        min-height: 0;
+        max-height: 42vh;
+      }
+
+      .detalle-contenido {
+        min-height: 300px;
+        padding: 23px;
+      }
+
+      .panel {
+        padding: 19px;
+      }
+
+      .admin-producto {
+        grid-template-columns: 70px minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .admin-producto-col-imagen,
+      .admin-imagen-wrapper {
+        width: 70px;
+      }
+
+      .admin-imagen-wrapper {
+        height: 70px;
+      }
+
+      .admin-producto-imagen,
+      .admin-imagen-wrapper .admin-producto-imagen {
+        width: 70px;
+        height: 70px;
+      }
+
+      .boton-cambiar-foto {
+        font-size: 10px;
+        min-height: 24px;
+        padding: 0 4px;
+      }
+
+      .admin-producto-campos {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-producto-campos .campo:first-child,
+      .admin-producto-campos .campo:nth-child(4) {
+        grid-column: auto;
+      }
+
+      .admin-producto-acciones {
+        flex-wrap: wrap;
+      }
+
+      .admin-agregar-form {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-agregar-form .campo:nth-child(3),
+      .admin-agregar-form .campo:nth-child(4),
+      .admin-agregar-form .campo:nth-child(5),
+      .admin-agregar-form > button {
+        grid-column: auto;
+      }
+    }
+
+
+    /* V2: refinamiento visual exclusivo para pantallas de celular. */
+    @media (max-width: 600px) {
+      .barra {
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        box-shadow: 0 6px 22px #00000024;
+      }
+      .bienvenida {
+        border-color: #f5c84228;
+        box-shadow: 0 14px 32px #00000035;
+      }
+      .bienvenida-texto {
+        padding: 30px 24px 26px;
+      }
+      .filtros {
+        gap: 10px;
+        margin-inline: -14px;
+        padding-inline: 14px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+      }
+      .filtros::-webkit-scrollbar { display: none; }
+      .filtro {
+        min-height: 44px;
+        scroll-snap-align: start;
+      }
+      .buscador input {
+        min-height: 50px;
+        font-size: 16px;
+      }
+      .tarjeta-producto {
+        border-radius: 20px;
+        box-shadow: 0 7px 18px #00000024;
+      }
+      .agregar-rapido {
+        min-width: 44px;
+        min-height: 44px;
+      }
+      .producto-nombre {
+        line-height: 1.3;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .tarjeta-producto {
+        grid-template-columns: 35% minmax(0, 1fr);
+      }
+
+      .controles-cantidad {
+        gap: 7px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .vista,
+      .nav-indicador,
+      .tarjeta-producto,
+      .producto-imagen {
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Modal de Login de Administrador */
+    .modal-fondo {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: #000000ba;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 1;
+      transition: opacity 190ms ease;
+    }
+
+    .modal-fondo[hidden] {
+      display: none !important;
+    }
+
+    .modal-tarjeta {
+      position: relative;
+      width: min(460px, 100%);
+      padding: 26px;
+      border: 1px solid #ffffff18;
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 24px 60px #000000aa;
+      animation: modalEntrar 240ms var(--spring);
+    }
+
+    @keyframes modalEntrar {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-cabecera {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .modal-cabecera h2 {
+      margin: 4px 0 0;
+      font-size: 21px;
+      letter-spacing: -0.03em;
+    }
+
+    .modal-cerrar {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface-raised);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 15px;
+      transition: color 150ms ease, background 150ms ease, transform 150ms ease;
+    }
+
+    .modal-cerrar:hover {
+      background: #2b2c26;
+      color: var(--text);
+    }
+
+    .modal-cerrar:active {
+      transform: scale(0.92);
+    }
+
+    .modal-descripcion {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .alerta-error {
+      padding: 12px 14px;
+      border: 1px solid #f17f7355;
+      border-radius: 13px;
+      background: #f17f731c;
+      color: #ff9b91;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .modal-acciones {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modal-acciones .boton {
+      flex: 1;
+    }
+
+    .modal-pie-info {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .modal-pie-info code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: var(--surface-raised);
+      color: var(--yellow);
+      font-size: 11px;
+    }
+
+    /* Barra de sesión en el panel de administración */
+    .admin-sesion-barra {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 16px 0 20px;
+      padding: 13px 18px;
+      border: 1px solid #91c88938;
+      border-radius: 16px;
+      background: #91c88910;
+    }
+
+    .admin-sesion-datos {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+    }
+
+    .admin-sesion-indicador {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+
+    .admin-sesion-correo {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .admin-aviso-seguridad {
+      margin: 0 0 20px;
+      padding: 12px 16px;
+      border: 1px solid #f5c8422e;
+      border-radius: 14px;
+      background: #f5c8420e;
+      color: #ede9d0;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .admin-aviso-seguridad strong {
+      color: var(--yellow);
+    }
+
+    /* Pestañas del Panel de Administración */
+    .admin-pestanas {
+      display: flex;
+      gap: 10px;
+      margin: 16px 0 22px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+      overflow-x: auto;
+    }
+
+    .admin-pestana {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms var(--spring);
+    }
+
+    .admin-pestana:hover {
+      color: var(--text);
+      border-color: #ffffff30;
+    }
+
+    .admin-pestana.activa {
+      background: var(--yellow);
+      color: #1a1913;
+      border-color: var(--yellow);
+    }
+
+    .badge-contador {
+      display: inline-grid;
+      place-items: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 99px;
+      background: #e76f51;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .admin-pestana.activa .badge-contador {
+      background: #1a1913;
+      color: var(--yellow);
+    }
+
+    /* Barra superior de pedidos en tiempo real */
+    .admin-pedidos-barra-sup {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .admin-pedidos-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--green);
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 99px;
+      background: #91c88918;
+      border: 1px solid #91c88935;
+    }
+
+    .admin-pedidos-live-punto {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulsoLive 2s infinite ease-in-out;
+    }
+
+    @keyframes pulsoLive {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Filtros de pedidos */
+    .admin-pedidos-filtros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filtro-pedido {
+      padding: 7px 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 600;
+      transition: all 150ms ease;
+    }
+
+    .filtro-pedido:hover {
+      color: var(--text);
+      border-color: #ffffff28;
+    }
+
+    .filtro-pedido.activo {
+      background: var(--surface-raised);
+      color: var(--yellow);
+      border-color: var(--yellow);
+    }
+
+    /* Lista y Tarjetas de Pedidos */
+    .admin-pedidos-lista {
+      display: grid;
+      gap: 16px;
+    }
+
+    .admin-pedidos-vacio {
+      padding: 36px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      background: var(--surface);
+    }
+
+    .admin-pedido-tarjeta {
+      border: 1px solid #ffffff14;
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 18px 20px;
+      display: grid;
+      gap: 14px;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+      animation: fila-entrada 220ms ease both;
+    }
+
+    .admin-pedido-tarjeta:hover {
+      border-color: #ffffff25;
+      box-shadow: 0 8px 24px #00000030;
+    }
+
+    .admin-pedido-cabecera {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .admin-pedido-id-grupo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-pedido-ref {
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--yellow);
+      background: var(--surface-raised);
+      padding: 3px 8px;
+      border-radius: 7px;
+      border: 1px solid #f5c84235;
+    }
+
+    .admin-pedido-fecha {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Badges de estado */
+    .badge-estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+    }
+
+    .estado-pendiente {
+      background: #f5c84218;
+      color: #f5c842;
+      border-color: #f5c84240;
+    }
+
+    .estado-aceptado {
+      background: #38bdf818;
+      color: #38bdf8;
+      border-color: #38bdf840;
+    }
+
+    .estado-preparando {
+      background: #fb923c18;
+      color: #fb923c;
+      border-color: #fb923c40;
+    }
+
+    .estado-encamino {
+      background: #c084fc18;
+      color: #c084fc;
+      border-color: #c084fc40;
+    }
+
+    .estado-entregado {
+      background: #4ade8018;
+      color: #4ade80;
+      border-color: #4ade8040;
+    }
+
+    /* Cuerpo del pedido: datos del cliente */
+    .admin-pedido-cuerpo {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .admin-pedido-cuerpo {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .admin-pedido-cliente-bloque {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .admin-pedido-cliente-bloque strong {
+      color: var(--text);
+    }
+
+    .admin-pedido-cliente-bloque .dato-icono {
+      color: var(--muted);
+      margin-right: 4px;
+    }
+
+    .admin-pedido-telefono-link {
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .admin-pedido-telefono-link:hover {
+      text-decoration: underline;
+    }
+
+    .admin-pedido-obs-caja {
+      margin-top: 6px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: var(--surface-raised);
+      border-left: 3px solid var(--yellow);
+      font-size: 12.5px;
+      color: #deddd4;
+    }
+
+    /* Lista de productos en el pedido */
+    .admin-pedido-items-bloque {
+      background: var(--surface-raised);
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .admin-pedido-items-titulo {
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .admin-pedido-item-fila {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 4px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed #ffffff10;
+    }
+
+    .admin-pedido-item-fila:last-child {
+      border-bottom: none;
+    }
+
+    .admin-pedido-verificacion {
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .verificacion-ok {
+      background: #4ade8015;
+      color: #4ade80;
+      border: 1px solid #4ade8035;
+    }
+
+    .verificacion-alerta {
+      background: #e76f5118;
+      color: #ff8b7b;
+      border: 1px solid #e76f5145;
+    }
+
+    /* Pie del pedido: total y selector de estado */
+    .admin-pedido-pie {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .admin-pedido-total-texto {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .admin-pedido-total-texto strong {
+      font-size: 20px;
+      color: var(--yellow);
+      margin-left: 6px;
+    }
+
+    .admin-pedido-control-estado {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-pedido-control-estado label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .select-estado-pedido {
+      min-height: 38px;
+      padding: 0 30px 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-raised);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #b9b8ad 50%), linear-gradient(135deg, #b9b8ad 50%, transparent 50%);
+      background-position: calc(100% - 15px) 16px, calc(100% - 10px) 16px;
+      background-repeat: no-repeat;
+      background-size: 5px 5px, 5px 5px;
+      transition: border-color 150ms ease;
+    }
+
+    .select-estado-pedido:focus {
+      border-color: var(--yellow);
+      outline: none;
+    }
+
+    .select-estado-pedido:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    /* Aviso de pedido en curso / éxito */
+    .aviso-pedido-enviado {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #4ade8015;
+      border: 1px solid #4ade8038;
+      color: #93e8b0;
+      font-size: 13px;
+      line-height: 1.5;
+      animation: fadeIn 200ms ease;
+    }
+  </style>
+</head>
+<body>
+  <div role="status" style="position:relative;z-index:10;text-align:center;padding:12px 18px;background:#f5c842;color:#17170f;font-weight:800;font-size:13px">🧪 DOMINGO FOOD V2 · DEMOSTRACIÓN · Sin pedidos ni escrituras a Firebase</div>
+  <header class="barra">
+    <div class="contenedor barra-interior">
+      <button class="marca" type="button" onclick="irA('inicio')" aria-label="Domingo Food, ir al inicio">
+        <span class="marca-icono" aria-hidden="true">🍔</span>
+        <span>Domingo Food</span>
+      </button>
+      <div class="barra-acciones">
+        <button id="nav-admin" class="boton-secundario" type="button" onclick="manejarBotonAdmin()" aria-label="Abrir panel de administración">
+          Administrar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <section id="vista-inicio" class="vista" aria-labelledby="titulo-inicio">
+      <div class="bienvenida">
+        <div class="bienvenida-texto">
+          <h1 id="titulo-inicio" tabindex="-1">Hoy se come bien.</h1>
+          <p>Buenos ingredientes, antojos sencillos y pedidos sin complicaciones.</p>
+          <button class="boton" type="button" onclick="document.getElementById('menu').scrollIntoView({ behavior: 'smooth' })">
+            Explorar menú <span aria-hidden="true">↓</span>
+          </button>
+        </div>
+        <div class="bienvenida-imagen">
+          <img
+            src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=88"
+            alt="Hamburguesa recién preparada con ingredientes frescos"
+            fetchpriority="high"
+          >
+        </div>
+      </div>
+
+      <section id="menu" class="seccion" aria-labelledby="titulo-menu">
+        <div class="seccion-cabecera">
+          <div>
+            <h2 id="titulo-menu">¿Qué se te antoja?</h2>
+          </div>
+          <label class="buscador">
+            <span class="buscador-icono" aria-hidden="true">⌕</span>
+            <input id="buscador" type="search" aria-label="Buscar productos en el menú" placeholder="Buscar en el menú..." autocomplete="off">
+          </label>
+        </div>
+
+        <div id="filtros-categoria" class="filtros" role="group" aria-label="Filtrar productos por categoría"></div>
+
+        <div class="estado-firestore" id="estado-firestore" role="status" aria-live="polite" data-estado="cargando">
+          Cargando productos desde Firestore...
+        </div>
+        <button id="reintentar-firestore" class="boton-secundario reintentar-firestore" type="button" hidden>
+          Reintentar conexión
+        </button>
+        <div id="productos" class="rejilla-productos" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <section id="vista-detalle" class="vista" aria-labelledby="detalle-nombre" hidden>
+      <div class="titulo-con-retorno">
+        <button class="boton-atras" type="button" onclick="irA('inicio')" aria-label="Volver al inicio">←</button>
+        <h1 class="titulo-vista">Detalle del producto</h1>
+      </div>
+      <article id="detalle-producto" class="detalle"></article>
+    </section>
+
+    <section id="vista-carrito" class="vista" aria-labelledby="titulo-carrito" hidden>
+      <div class="titulo-con-retorno">
+        <button class="boton-atras" type="button" onclick="irA('inicio')" aria-label="Volver al inicio">←</button>
+        <div>
+          <span class="eyebrow">Tu selección</span>
+          <h1 id="titulo-carrito" class="titulo-vista" tabindex="-1">Tu carrito</h1>
+        </div>
+      </div>
+
+      <div class="carrito-layout">
+        <section class="panel" aria-labelledby="titulo-resumen">
+          <h2 id="titulo-resumen">Resumen del pedido</h2>
+          <p class="panel-subtitulo">Revisa los productos y las cantidades.</p>
+          <div id="carrito" aria-live="polite"></div>
+          <div class="resumen-total">
+            <span>Total</span>
+            <strong id="total">$0.00</strong>
+          </div>
+          <div class="acciones-carrito">
+            <button class="boton-secundario" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+            <button class="boton-secundario" type="button" onclick="irA('inicio')">Seguir explorando</button>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="titulo-entrega">
+          <h2 id="titulo-entrega">Datos de entrega</h2>
+          <p class="panel-subtitulo">Completa tus datos para enviar el pedido.</p>
+          <form id="formulario-pedido" class="formulario">
+            <div class="campo">
+              <label for="nombre-cliente">Nombre del cliente *</label>
+              <input id="nombre-cliente" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre y apellido" required>
+            </div>
+            <div class="campo">
+              <label for="telefono-cliente">Teléfono de contacto *</label>
+              <input id="telefono-cliente" name="telefono" type="tel" autocomplete="tel" placeholder="Ej: 55 1234 5678" required>
+            </div>
+            <div class="campo">
+              <label for="tipo-entrega">Tipo de entrega</label>
+              <select id="tipo-entrega" name="tipo-entrega">
+                <option value="domicilio">Entrega a domicilio</option>
+                <option value="retiro">Retiro en el local</option>
+              </select>
+            </div>
+            <div class="campo" id="campo-direccion">
+              <label for="direccion">Dirección de entrega *</label>
+              <input id="direccion" name="direccion" type="text" autocomplete="street-address" placeholder="Calle, número, colonia o referencia" required>
+            </div>
+            <div class="campo">
+              <label for="observaciones-pedido">Observaciones (opcional)</label>
+              <textarea id="observaciones-pedido" name="observaciones" rows="2" placeholder="Ej: Sin cebolla, salsas aparte, cambio de $200..."></textarea>
+            </div>
+            <p class="ayuda">Se abrirá WhatsApp con el resumen listo para enviar. El pedido se confirma al enviarlo desde WhatsApp. No se realizan pagos en esta página.</p>
+            <button id="boton-whatsapp" class="boton boton-whatsapp" type="submit">Enviar pedido por WhatsApp <span aria-hidden="true">↗</span></button>
+            <div id="pedido-feedback" class="aviso-pedido-enviado" hidden role="status" aria-live="polite"></div>
+            <div id="pedido-error" class="alerta-error" style="margin-top: 12px;" hidden role="alert"></div>
+          </form>
+        </section>
+      </div>
+    </section>
+
+    <section id="vista-admin" class="vista" aria-labelledby="titulo-admin" hidden>
+      <div class="titulo-con-retorno">
+        <button class="boton-atras" type="button" onclick="irA('inicio')" aria-label="Volver al inicio">←</button>
+        <div>
+          <span class="eyebrow">Panel de control</span>
+          <h1 id="titulo-admin" class="titulo-vista" tabindex="-1">Panel de administración</h1>
+        </div>
+      </div>
+
+      <div class="admin-sesion-barra">
+        <div class="admin-sesion-datos">
+          <span class="admin-sesion-indicador" aria-hidden="true"></span>
+          <span>Administrador: <strong id="admin-usuario-correo" class="admin-sesion-correo">...</strong></span>
+        </div>
+        <button id="boton-cerrar-sesion" class="boton-secundario" type="button" onclick="cerrarSesionAdmin()">
+          Cerrar sesión
+        </button>
+      </div>
+
+      <div class="admin-aviso-seguridad">
+        <strong>Panel protegido:</strong> Conexión con Firebase Authentication y Firestore activa. Los pedidos y productos se sincronizan en tiempo real con reglas de seguridad.
+      </div>
+
+      <nav class="admin-pestanas" role="tablist" aria-label="Secciones de administración">
+        <button id="pestana-admin-pedidos" class="admin-pestana activa" type="button" role="tab" aria-selected="true" onclick="cambiarPestanaAdmin('pedidos')">
+          <span>📋 Pedidos en tiempo real</span>
+          <span id="badge-pedidos-pendientes" class="badge-contador" hidden>0</span>
+        </button>
+        <button id="pestana-admin-productos" class="admin-pestana" type="button" role="tab" aria-selected="false" onclick="cambiarPestanaAdmin('productos')">
+          <span>🍔 Menú y productos</span>
+        </button>
+      </nav>
+
+      <!-- SECCIÓN DE PEDIDOS EN TIEMPO REAL -->
+      <div id="admin-seccion-pedidos" class="admin-seccion">
+        <div class="admin-pedidos-barra-sup">
+          <div class="admin-pedidos-live">
+            <span class="admin-pedidos-live-punto" aria-hidden="true"></span>
+            <span>En vivo · Firestore en tiempo real</span>
+          </div>
+          <span id="admin-pedidos-resumen-texto" class="ayuda">Cargando pedidos...</span>
+        </div>
+
+        <div class="admin-pedidos-filtros" role="toolbar" aria-label="Filtrar pedidos por estado">
+          <button class="filtro-pedido activo" type="button" data-estado-filtro="Todos" onclick="filtrarPedidosAdmin('Todos')">Todos (<span id="conteo-filtro-todos">0</span>)</button>
+          <button class="filtro-pedido" type="button" data-estado-filtro="Pendiente" onclick="filtrarPedidosAdmin('Pendiente')">⏳ Pendientes (<span id="conteo-filtro-pendiente">0</span>)</button>
+          <button class="filtro-pedido" type="button" data-estado-filtro="Aceptado" onclick="filtrarPedidosAdmin('Aceptado')">✓ Aceptados (<span id="conteo-filtro-aceptado">0</span>)</button>
+          <button class="filtro-pedido" type="button" data-estado-filtro="Preparando" onclick="filtrarPedidosAdmin('Preparando')">🍳 Preparando (<span id="conteo-filtro-preparando">0</span>)</button>
+          <button class="filtro-pedido" type="button" data-estado-filtro="En camino" onclick="filtrarPedidosAdmin('En camino')">🛵 En camino (<span id="conteo-filtro-encamino">0</span>)</button>
+          <button class="filtro-pedido" type="button" data-estado-filtro="Entregado" onclick="filtrarPedidosAdmin('Entregado')">✅ Entregados (<span id="conteo-filtro-entregado">0</span>)</button>
+        </div>
+
+        <div id="admin-pedidos-lista" class="admin-pedidos-lista" aria-live="polite">
+          <div class="admin-pedidos-vacio">Conectando con Firestore para escuchar pedidos en tiempo real...</div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE MENÚ Y PRODUCTOS -->
+      <div id="admin-seccion-productos" class="admin-seccion" hidden>
+        <div class="seccion-cabecera">
+          <h2>Productos del menú</h2>
+          <button class="boton-secundario" type="button" onclick="restablecerMenu()">Restablecer menú original</button>
+        </div>
+        <div id="admin-lista" class="admin-lista"></div>
+
+        <details id="admin-agregar" class="admin-agregar">
+          <summary>＋ Añadir producto</summary>
+          <form id="formulario-nuevo-producto" class="admin-agregar-form">
+            <div class="campo">
+              <label for="nuevo-nombre">Nombre</label>
+              <input id="nuevo-nombre" name="nombre" type="text" maxlength="60" required>
+            </div>
+            <div class="campo">
+              <label for="nuevo-precio">Precio</label>
+              <input id="nuevo-precio" name="precio" type="number" min="0.01" step="0.01" required>
+            </div>
+            <div class="campo">
+              <label for="nuevo-descripcion">Descripción</label>
+              <input id="nuevo-descripcion" name="descripcion" type="text" maxlength="180" required>
+            </div>
+            <div class="campo campo-imagen-upload">
+              <label for="nuevo-imagen">Imagen del producto</label>
+              
+              <div class="subida-imagen-bloque">
+                <!-- Vista previa de la imagen -->
+                <div id="nuevo-preview-contenedor" class="subida-preview-caja" hidden>
+                  <img id="nuevo-preview-img" src="" alt="Vista previa del nuevo producto" class="subida-preview-img">
+                  <button type="button" class="subida-preview-quitar" onclick="quitarImagenNuevoProducto()" aria-label="Quitar imagen seleccionada" title="Quitar imagen">✕</button>
+                </div>
+
+                <!-- Selector de archivo desde el dispositivo -->
+                <div class="subida-acciones">
+                  <label class="boton-subir-archivo" id="nuevo-label-archivo">
+                    <input type="file" id="nuevo-archivo" accept="image/jpeg,image/png,image/webp,image/gif" hidden onchange="manejarSubidaImagenNuevo(this)">
+                    <span class="subida-icono" aria-hidden="true">📷</span>
+                    <span id="nuevo-subida-texto">Subir foto desde el dispositivo</span>
+                  </label>
+                  <span class="subida-separador">o ingresa el enlace directo:</span>
+                </div>
+
+                <!-- Campo URL (se auto-rellena con Cloudinary o permite ingreso manual) -->
+                <input id="nuevo-imagen" name="imagen" type="url" placeholder="https://res.cloudinary.com/..." required oninput="actualizarPreviewManualNuevo(this.value)">
+
+                <!-- Indicador de carga -->
+                <div id="nuevo-progreso" class="subida-progreso" hidden role="status" aria-live="polite">
+                  <span class="subida-spinner" aria-hidden="true"></span>
+                  <span id="nuevo-progreso-texto">Subiendo imagen a Cloudinary...</span>
+                </div>
+
+                <!-- Mensajes de error -->
+                <div id="nuevo-subida-error" class="subida-error" hidden role="alert"></div>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="nuevo-categoria">Categoría</label>
+              <input id="nuevo-categoria" name="categoria" type="text" list="categorias-sugeridas" maxlength="40" required>
+              <datalist id="categorias-sugeridas">
+                <option value="Tacos"></option>
+                <option value="Hamburguesas"></option>
+                <option value="Acompañamientos"></option>
+              </datalist>
+            </div>
+            <button class="boton" type="submit">Añadir al menú</button>
+          </form>
+        </details>
+        <p id="admin-estado" class="admin-estado" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Inicio de Sesión de Administrador -->
+  <div id="modal-login-admin" class="modal-fondo" hidden role="dialog" aria-modal="true" aria-labelledby="modal-login-titulo">
+    <div class="modal-tarjeta">
+      <div class="modal-cabecera">
+        <div>
+          <span class="eyebrow">Acceso restringido</span>
+          <h2 id="modal-login-titulo">Administración Domingo Food</h2>
+        </div>
+        <button type="button" class="modal-cerrar" onclick="cerrarModalLoginAdmin()" aria-label="Cerrar ventana de inicio de sesión">✕</button>
+      </div>
+      <p class="modal-descripcion">
+        Ingresa con tu correo y contraseña autorizados para acceder al panel de administración.
+      </p>
+
+      <form id="formulario-login-admin" class="formulario" novalidate>
+        <div class="campo">
+          <label for="admin-email">Correo electrónico</label>
+          <input
+            id="admin-email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            placeholder="admin@domingofood.com"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="admin-password">Contraseña</label>
+          <input
+            id="admin-password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            required
+          >
+        </div>
+
+        <div id="admin-login-error" class="alerta-error" hidden role="alert"></div>
+
+        <div class="modal-acciones">
+          <button id="boton-login-admin" class="boton" type="submit">
+            <span>Iniciar sesión</span>
+          </button>
+          <button type="button" class="boton-secundario" onclick="cerrarModalLoginAdmin()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+
+      <div class="modal-pie-info">
+        <small>Solo cuentas autorizadas en la colección <code>admins</code> de Firestore pueden gestionar el menú.</small>
+      </div>
+    </div>
+  </div>
+
+  <footer class="pie">
+    <div class="contenedor">Domingo Food · Gracias por elegirnos</div>
+  </footer>
+
+  <nav class="nav-inferior" aria-label="Navegación principal">
+    <div id="nav-interior" class="nav-interior" data-active="inicio">
+      <span class="nav-indicador" aria-hidden="true"></span>
+      <button id="nav-inicio" class="nav-boton" type="button" onclick="irA('inicio')" aria-current="page">
+        <span class="nav-icono" aria-hidden="true">⌂</span>
+        <span>Inicio</span>
+      </button>
+      <button id="nav-carrito" class="nav-boton" type="button" onclick="irA('carrito')">
+        <span class="nav-icono" aria-hidden="true">▣</span>
+        <span>Carrito</span>
+        <span id="contador-carrito" class="contador-carrito" aria-label="0 productos en el carrito">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    // Configuración del número de WhatsApp del negocio en este único lugar.
+    // Formato internacional con código de país, solo dígitos (ej: "5215512345678").
+    // Si se deja vacío (""), WhatsApp abrirá la conversación permitiendo elegir el destinatario.
+    const WHATSAPP_NEGOCIO = "";
+    const CLAVE_CARRITO = "domingoFoodCarrito";
+    const CLAVE_CLIENTE = "domingoFoodCliente";
+    const CLAVE_MENU_DEMO = "domingoFoodMenuDemo";
+    const MENU_ORIGINAL = [
+      {
+        id: "tacos-carne",
+        nombre: "Tacos de carne",
+        precio: 2.50,
+        categoria: "Tacos",
+        descripcion: "Carne sazonada, cilantro fresco y un toque de limón.",
+        imagen: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=1000&q=85",
+        alt: "Tacos de carne servidos con cilantro y limón",
+        disponible: true
+      },
+      {
+        id: "hamburguesa",
+        nombre: "Hamburguesa",
+        precio: 3.50,
+        categoria: "Hamburguesas",
+        descripcion: "Jugosa, con queso y vegetales frescos en pan tostado.",
+        imagen: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=85",
+        alt: "Hamburguesa con queso, vegetales y pan tostado",
+        disponible: true
+      },
+      {
+        id: "papas-fritas",
+        nombre: "Papas fritas",
+        precio: 1.50,
+        categoria: "Acompañamientos",
+        descripcion: "Doradas y crujientes, ideales para acompañar.",
+        imagen: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=1000&q=85",
+        alt: "Papas fritas doradas recién preparadas",
+        disponible: true
+      }
+    ];
+    let MENU = MENU_ORIGINAL.map(producto => ({ ...producto }));
+    let productos = [];
+    let total = 0;
+    let categoriaActual = "Todos";
+    let productoSeleccionado = null;
+    let vistaActual = "inicio";
+    let tokenTransicionVista = 0;
+    let estadoCargaMenu = "cargando";
+
+    function cargarProductos() {
+      const guardados = localStorage.getItem(CLAVE_CARRITO);
+      if (guardados === null) {
+        return [];
+      }
+
+      let productosGuardados;
+      try {
+        productosGuardados = JSON.parse(guardados);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          console.error("No se pudo restaurar el carrito: los datos guardados no son válidos.", error);
+          return [];
+        }
+        throw error;
+      }
+
+      if (
+        !Array.isArray(productosGuardados) ||
+        !productosGuardados.every(producto =>
+          producto !== null &&
+          typeof producto === "object" &&
+          !Array.isArray(producto) &&
+          typeof producto.nombre === "string" &&
+          producto.nombre.trim() !== "" &&
+          typeof producto.precio === "number" &&
+          Number.isFinite(producto.precio) &&
+          producto.precio >= 0 &&
+          (producto.cantidad === undefined ||
+            (Number.isSafeInteger(producto.cantidad) && producto.cantidad > 0))
+        )
+      ) {
+        console.error("No se pudo restaurar el carrito: los datos guardados tienen un formato inválido.");
+        return [];
+      }
+
+      return productosGuardados.reduce((lista, guardado) => {
+        const cantidad = guardado.cantidad === undefined ? 1 : guardado.cantidad;
+        const existente = lista.find(producto =>
+          producto.nombre === guardado.nombre && producto.precio === guardado.precio
+        );
+        if (existente) {
+          existente.cantidad += cantidad;
+        } else {
+          lista.push({ nombre: guardado.nombre, precio: guardado.precio, cantidad });
+        }
+        return lista;
+      }, []);
+    }
+
+    function urlImagenValida(valor) {
+      try {
+        const url = new URL(valor);
+        return url.protocol === "https:" || url.protocol === "http:";
+      } catch {
+        return false;
+      }
+    }
+
+    function productoMenuValido(producto) {
+      return producto !== null &&
+        typeof producto === "object" &&
+        !Array.isArray(producto) &&
+        typeof producto.id === "string" &&
+        producto.id.trim() !== "" &&
+        typeof producto.nombre === "string" &&
+        producto.nombre.trim() !== "" &&
+        typeof producto.precio === "number" &&
+        Number.isFinite(producto.precio) &&
+        producto.precio > 0 &&
+        typeof producto.categoria === "string" &&
+        producto.categoria.trim() !== "" &&
+        typeof producto.descripcion === "string" &&
+        producto.descripcion.trim() !== "" &&
+        typeof producto.alt === "string" &&
+        producto.alt.trim() !== "" &&
+        typeof producto.imagen === "string" &&
+        urlImagenValida(producto.imagen) &&
+        typeof producto.disponible === "boolean";
+    }
+
+    function cargarMenu() {
+      let guardados;
+      try {
+        guardados = localStorage.getItem(CLAVE_MENU_DEMO);
+      } catch (error) {
+        console.error("No se pudo leer el menú de demostración del almacenamiento local.", error);
+        return MENU_ORIGINAL.map(producto => ({ ...producto }));
+      }
+
+      if (guardados === null) {
+        return MENU_ORIGINAL.map(producto => ({ ...producto }));
+      }
+
+      let menuGuardado;
+      try {
+        menuGuardado = JSON.parse(guardados);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          console.error("El menú de demostración guardado no contiene JSON válido.", error);
+          return MENU_ORIGINAL.map(producto => ({ ...producto }));
+        }
+        throw error;
+      }
+
+      if (
+        !Array.isArray(menuGuardado) ||
+        !menuGuardado.every(productoMenuValido) ||
+        new Set(menuGuardado.map(producto => producto.id)).size !== menuGuardado.length
+      ) {
+        console.error("El menú de demostración guardado tiene un formato inválido.");
+        return MENU_ORIGINAL.map(producto => ({ ...producto }));
+      }
+
+      return menuGuardado;
+    }
+
+    function guardarMenu() {
+      try {
+        localStorage.setItem(CLAVE_MENU_DEMO, JSON.stringify(MENU));
+      } catch (error) {
+        console.error("No se pudo guardar el menú de demostración.", error);
+        mostrarEstadoAdmin("No se pudieron guardar los cambios en este navegador.", true);
+        return false;
+      }
+      return true;
+    }
+
+    function mostrarEstadoAdmin(mensaje, esError = false) {
+      const estado = document.getElementById("admin-estado");
+      estado.textContent = mensaje;
+      estado.style.color = esError ? "var(--danger)" : "var(--green)";
+    }
+
+    function crearCampoAdmin(etiqueta, nombre, valor, tipo = "text") {
+      const campo = document.createElement("div");
+      campo.className = "campo";
+      const id = "admin-" + nombre + "-" + Math.random().toString(36).slice(2, 9);
+      const label = document.createElement("label");
+      label.htmlFor = id;
+      label.textContent = etiqueta;
+      const input = document.createElement("input");
+      input.id = id;
+      input.name = nombre;
+      input.type = tipo;
+      input.value = String(valor);
+      input.required = true;
+      if (nombre === "nombre") {
+        input.maxLength = 60;
+      } else if (nombre === "descripcion") {
+        input.maxLength = 180;
+      } else if (nombre === "categoria") {
+        input.maxLength = 40;
+      } else if (nombre === "precio") {
+        input.min = "0.01";
+        input.step = "0.01";
+      } else if (nombre === "imagen") {
+        input.placeholder = "https://...";
+      }
+      campo.append(label, input);
+      return campo;
+    }
+
+    const CLOUDINARY_CLOUD_NAME = "xv1ywrua";
+    const CLOUDINARY_UPLOAD_PRESET = "domingo_food";
+    const CLOUDINARY_UPLOAD_URL = "https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD_NAME + "/image/upload";
+
+    async function subirImagenACloudinary(archivo, onProgress) {
+      if (!window.usuarioAdminActual || !window.usuarioAdminActual.autorizado) {
+        throw new Error("Acceso no autorizado: debes iniciar sesión como administrador para subir imágenes.");
+      }
+
+      if (!archivo || !(archivo instanceof File)) {
+        throw new Error("No se ha seleccionado ningún archivo.");
+      }
+
+      const tiposPermitidos = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+      if (!tiposPermitidos.includes(archivo.type) && !archivo.type.startsWith("image/")) {
+        throw new Error("Formato de imagen no compatible. Usa JPG, PNG, WebP o GIF.");
+      }
+
+      const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+      if (archivo.size > MAX_BYTES) {
+        throw new Error("La imagen supera los 10 MB. Elige una imagen más liviana.");
+      }
+
+      const formData = new FormData();
+      formData.append("file", archivo);
+      formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", CLOUDINARY_UPLOAD_URL);
+
+        if (onProgress && xhr.upload) {
+          xhr.upload.onprogress = evento => {
+            if (evento.lengthComputable) {
+              const porcentaje = Math.round((evento.loaded / evento.total) * 100);
+              onProgress(porcentaje);
+            }
+          };
+        }
+
+        xhr.onload = () => {
+          try {
+            const respuesta = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300 && respuesta.secure_url) {
+              resolve(respuesta.secure_url);
+            } else {
+              const mensajeError = (respuesta && respuesta.error && respuesta.error.message)
+                ? respuesta.error.message
+                : "Error al procesar la imagen en Cloudinary (" + xhr.status + ").";
+              reject(new Error(mensajeError));
+            }
+          } catch (err) {
+            reject(new Error("Respuesta no válida del servicio de imágenes."));
+          }
+        };
+
+        xhr.onerror = () => {
+          reject(new Error("Error de red al conectar con Cloudinary. Comprueba tu conexión a internet."));
+        };
+
+        xhr.send(formData);
+      });
+    }
+
+    async function manejarSubidaImagenNuevo(input) {
+      const archivo = input.files && input.files[0];
+      if (!archivo) return;
+
+      const previewContenedor = document.getElementById("nuevo-preview-contenedor");
+      const previewImg = document.getElementById("nuevo-preview-img");
+      const progreso = document.getElementById("nuevo-progreso");
+      const progresoTexto = document.getElementById("nuevo-progreso-texto");
+      const errorBox = document.getElementById("nuevo-subida-error");
+      const inputUrl = document.getElementById("nuevo-imagen");
+      const labelSubir = document.getElementById("nuevo-label-archivo");
+      const textoSubir = document.getElementById("nuevo-subida-texto");
+      const submitBtn = document.querySelector("#formulario-nuevo-producto button[type='submit']");
+
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+
+      // Previsualización local inmediata
+      const urlTemporal = URL.createObjectURL(archivo);
+      if (previewImg && previewContenedor) {
+        previewImg.src = urlTemporal;
+        previewContenedor.hidden = false;
+      }
+
+      if (progreso) {
+        progreso.hidden = false;
+      }
+      if (progresoTexto) {
+        progresoTexto.textContent = "Subiendo imagen a Cloudinary (0%)...";
+      }
+      if (labelSubir) {
+        labelSubir.classList.add("deshabilitado");
+      }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+      }
+
+      try {
+        const secureUrl = await subirImagenACloudinary(archivo, porcentaje => {
+          if (progresoTexto) {
+            progresoTexto.textContent = "Subiendo imagen a Cloudinary (" + porcentaje + "%)...";
+          }
+        });
+
+        if (inputUrl) {
+          inputUrl.value = secureUrl;
+        }
+        if (previewImg) {
+          previewImg.src = secureUrl;
+        }
+        if (textoSubir) {
+          textoSubir.textContent = "✓ Foto subida (clic para cambiar)";
+        }
+        if (progreso) {
+          progreso.hidden = true;
+        }
+      } catch (error) {
+        console.error("Error al subir imagen de nuevo producto:", error);
+        if (errorBox) {
+          errorBox.textContent = "Error al subir a Cloudinary: " + (error.message || error);
+          errorBox.hidden = false;
+        }
+        if (!inputUrl || !inputUrl.value) {
+          if (previewContenedor) previewContenedor.hidden = true;
+        }
+        if (textoSubir) {
+          textoSubir.textContent = "Subir foto desde el dispositivo";
+        }
+        if (progreso) {
+          progreso.hidden = true;
+        }
+      } finally {
+        if (labelSubir) {
+          labelSubir.classList.remove("deshabilitado");
+        }
+        if (submitBtn) {
+          submitBtn.disabled = false;
+        }
+        input.value = "";
+      }
+    }
+
+    function quitarImagenNuevoProducto() {
+      const inputUrl = document.getElementById("nuevo-imagen");
+      const previewContenedor = document.getElementById("nuevo-preview-contenedor");
+      const previewImg = document.getElementById("nuevo-preview-img");
+      const archivoInput = document.getElementById("nuevo-archivo");
+      const errorBox = document.getElementById("nuevo-subida-error");
+      const progreso = document.getElementById("nuevo-progreso");
+      const textoSubir = document.getElementById("nuevo-subida-texto");
+
+      if (inputUrl) inputUrl.value = "";
+      if (previewImg) previewImg.src = "";
+      if (previewContenedor) previewContenedor.hidden = true;
+      if (archivoInput) archivoInput.value = "";
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+      if (progreso) progreso.hidden = true;
+      if (textoSubir) textoSubir.textContent = "Subir foto desde el dispositivo";
+    }
+
+    function actualizarPreviewManualNuevo(valor) {
+      const previewContenedor = document.getElementById("nuevo-preview-contenedor");
+      const previewImg = document.getElementById("nuevo-preview-img");
+      const textoSubir = document.getElementById("nuevo-subida-texto");
+      const url = String(valor).trim();
+
+      if (urlImagenValida(url)) {
+        if (previewImg && previewContenedor) {
+          previewImg.src = url;
+          previewContenedor.hidden = false;
+        }
+        if (textoSubir) textoSubir.textContent = "Cambiar foto desde el dispositivo";
+      } else {
+        if (previewContenedor) previewContenedor.hidden = true;
+        if (previewImg) previewImg.src = "";
+        if (textoSubir) textoSubir.textContent = "Subir foto desde el dispositivo";
+      }
+    }
+
+    function renderizarAdmin() {
+      const lista = document.getElementById("admin-lista");
+      lista.replaceChildren();
+
+      MENU.forEach(producto => {
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "admin-producto";
+
+        // Columna de imagen con selector desde el dispositivo
+        const colImagen = document.createElement("div");
+        colImagen.className = "admin-producto-col-imagen";
+
+        const wrapperImagen = document.createElement("div");
+        wrapperImagen.className = "admin-imagen-wrapper";
+
+        const imagen = document.createElement("img");
+        imagen.className = "admin-producto-imagen";
+        imagen.src = producto.imagen;
+        imagen.alt = "Vista previa: " + producto.nombre;
+        imagen.loading = "lazy";
+
+        const overlayCarga = document.createElement("div");
+        overlayCarga.className = "admin-imagen-overlay-carga";
+        overlayCarga.hidden = true;
+        const spinnerThumb = document.createElement("div");
+        spinnerThumb.className = "subida-spinner";
+        const textoThumb = document.createElement("span");
+        textoThumb.textContent = "Subiendo...";
+        overlayCarga.append(spinnerThumb, textoThumb);
+        wrapperImagen.append(imagen, overlayCarga);
+
+        const labelCambiar = document.createElement("label");
+        labelCambiar.className = "boton-cambiar-foto";
+        labelCambiar.title = "Subir foto desde el dispositivo para " + producto.nombre;
+
+        const inputArchivo = document.createElement("input");
+        inputArchivo.type = "file";
+        inputArchivo.accept = "image/jpeg,image/png,image/webp,image/gif";
+        inputArchivo.hidden = true;
+
+        const textoBoton = document.createElement("span");
+        textoBoton.textContent = "📷 Cambiar";
+        labelCambiar.append(inputArchivo, textoBoton);
+
+        colImagen.append(wrapperImagen, labelCambiar);
+
+        const formulario = document.createElement("form");
+        formulario.className = "admin-producto-campos";
+        formulario.dataset.productoId = producto.id;
+        formulario.append(
+          crearCampoAdmin("Nombre", "nombre", producto.nombre),
+          crearCampoAdmin("Precio", "precio", producto.precio.toFixed(2), "number"),
+          crearCampoAdmin("Descripción", "descripcion", producto.descripcion)
+        );
+
+        const campoImagen = crearCampoAdmin("URL de la imagen", "imagen", producto.imagen, "url");
+        const inputUrlDirecta = campoImagen.querySelector("input");
+        if (inputUrlDirecta) {
+          inputUrlDirecta.addEventListener("input", () => {
+            if (urlImagenValida(inputUrlDirecta.value.trim())) {
+              imagen.src = inputUrlDirecta.value.trim();
+            }
+          });
+        }
+        formulario.appendChild(campoImagen);
+
+        formulario.appendChild(
+          crearCampoAdmin("Categoría", "categoria", producto.categoria)
+        );
+
+        // Evento de subida a Cloudinary para producto existente
+        inputArchivo.addEventListener("change", async () => {
+          const archivo = inputArchivo.files && inputArchivo.files[0];
+          if (!archivo) return;
+
+          const previewLocalUrl = URL.createObjectURL(archivo);
+          imagen.src = previewLocalUrl;
+          overlayCarga.hidden = false;
+          labelCambiar.classList.add("deshabilitado");
+          mostrarEstadoAdmin("Subiendo imagen a Cloudinary para " + producto.nombre + "...", false);
+
+          try {
+            const secureUrl = await subirImagenACloudinary(archivo, pct => {
+              textoThumb.textContent = pct + "%";
+            });
+
+            imagen.src = secureUrl;
+            if (inputUrlDirecta) {
+              inputUrlDirecta.value = secureUrl;
+            }
+            producto.imagen = secureUrl;
+
+            // Guardar inmediatamente en Firestore si estamos autenticados
+            if (window.guardarProductoFirestore && window.usuarioAdminActual && window.usuarioAdminActual.autorizado) {
+              const datosActualizar = {
+                ...producto,
+                imagen: secureUrl
+              };
+              await window.guardarProductoFirestore(producto.id, datosActualizar);
+              mostrarEstadoAdmin("✓ Foto subida a Cloudinary y guardada en Firestore para: " + producto.nombre);
+            } else {
+              guardarMenu();
+              mostrarEstadoAdmin("✓ Foto subida a Cloudinary y guardada localmente para: " + producto.nombre);
+            }
+
+            renderizarProductos();
+            if (productoSeleccionado && productoSeleccionado.id === producto.id) {
+              productoSeleccionado.imagen = secureUrl;
+            }
+          } catch (error) {
+            console.error("Error al subir foto de producto a Cloudinary:", error);
+            imagen.src = producto.imagen;
+            mostrarEstadoAdmin("Error al subir imagen a Cloudinary: " + (error.message || error), true);
+          } finally {
+            overlayCarga.hidden = true;
+            labelCambiar.classList.remove("deshabilitado");
+            textoThumb.textContent = "Subiendo...";
+            inputArchivo.value = "";
+          }
+        });
+
+        const acciones = document.createElement("div");
+        acciones.className = "admin-producto-acciones";
+        const disponibleLabel = document.createElement("label");
+        disponibleLabel.className = "disponible-control";
+        const disponible = document.createElement("input");
+        disponible.type = "checkbox";
+        disponible.name = "disponible";
+        disponible.checked = producto.disponible;
+        disponibleLabel.append(disponible, document.createTextNode("Disponible para pedidos"));
+
+        const botones = document.createElement("div");
+        botones.className = "acciones-carrito";
+        const guardar = document.createElement("button");
+        guardar.className = "boton";
+        guardar.type = "submit";
+        guardar.textContent = "Guardar cambios";
+        const eliminar = document.createElement("button");
+        eliminar.className = "boton-secundario";
+        eliminar.type = "button";
+        eliminar.textContent = "Eliminar";
+        eliminar.setAttribute("aria-label", "Eliminar " + producto.nombre + " del menú");
+        eliminar.addEventListener("click", () => eliminarProducto(producto.id));
+        botones.append(guardar, eliminar);
+        acciones.append(disponibleLabel, botones);
+        formulario.appendChild(acciones);
+
+        formulario.addEventListener("submit", evento => {
+          evento.preventDefault();
+          guardarCambiosProducto(formulario);
+        });
+
+        tarjeta.append(colImagen, formulario);
+        lista.appendChild(tarjeta);
+      });
+    }
+
+    async function guardarCambiosProducto(formulario) {
+      const id = formulario.dataset.productoId;
+      const producto = MENU.find(item => item.id === id);
+      if (!producto) {
+        mostrarEstadoAdmin("No se encontró el producto para actualizar.", true);
+        return;
+      }
+
+      const datos = new FormData(formulario);
+      const actualizado = {
+        ...producto,
+        nombre: String(datos.get("nombre")).trim(),
+        precio: Number(datos.get("precio")),
+        descripcion: String(datos.get("descripcion")).trim(),
+        imagen: String(datos.get("imagen")).trim(),
+        alt: String(datos.get("nombre")).trim(),
+        categoria: String(datos.get("categoria")).trim(),
+        disponible: datos.has("disponible")
+      };
+      if (!productoMenuValido(actualizado)) {
+        mostrarEstadoAdmin("Revisa los datos: precio mayor que cero, campos completos e imagen HTTP/HTTPS válida.", true);
+        return;
+      }
+
+      mostrarEstadoAdmin("Guardando cambios...", false);
+
+      if (window.guardarProductoFirestore && window.usuarioAdminActual && window.usuarioAdminActual.autorizado) {
+        try {
+          await window.guardarProductoFirestore(id, actualizado);
+          mostrarEstadoAdmin("✓ Cambios guardados correctamente en Firestore.");
+        } catch (error) {
+          console.error("Error guardando en Firestore:", error);
+          const detalle = error.code === "permission-denied"
+            ? "Permiso denegado: El usuario no cuenta con autorización en la colección 'admins' de Firestore."
+            : (error.message || "Error al actualizar en Firestore.");
+          mostrarEstadoAdmin("Error: " + detalle, true);
+          return;
+        }
+      } else {
+        MENU = MENU.map(item => item.id === id ? actualizado : item);
+        if (!guardarMenu()) {
+          MENU = MENU.map(item => item.id === id ? producto : item);
+          return;
+        }
+        mostrarEstadoAdmin("Cambios guardados localmente.");
+      }
+
+      renderizarAdmin();
+      renderizarProductos();
+      if (productoSeleccionado && productoSeleccionado.id === id) {
+        productoSeleccionado = actualizado;
+      }
+    }
+
+    async function agregarProductoAdmin(evento) {
+      evento.preventDefault();
+      const formulario = evento.currentTarget;
+      const datos = new FormData(formulario);
+      const nombre = String(datos.get("nombre")).trim();
+      const producto = {
+        id: "temp-" + Date.now().toString(36),
+        nombre,
+        precio: Number(datos.get("precio")),
+        categoria: String(datos.get("categoria")).trim(),
+        descripcion: String(datos.get("descripcion")).trim(),
+        imagen: String(datos.get("imagen")).trim(),
+        alt: nombre,
+        disponible: true
+      };
+      if (!productoMenuValido(producto)) {
+        mostrarEstadoAdmin("Revisa los datos: precio mayor que cero, campos completos e imagen HTTP/HTTPS válida.", true);
+        return;
+      }
+      if (MENU.some(item => item.nombre.toLocaleLowerCase("es") === nombre.toLocaleLowerCase("es"))) {
+        mostrarEstadoAdmin("Ya existe un producto con ese nombre.", true);
+        return;
+      }
+
+      mostrarEstadoAdmin("Añadiendo producto...", false);
+
+      if (window.agregarProductoFirestore && window.usuarioAdminActual && window.usuarioAdminActual.autorizado) {
+        try {
+          const nuevoId = await window.agregarProductoFirestore(producto);
+          producto.id = nuevoId;
+          formulario.reset();
+          quitarImagenNuevoProducto();
+          document.getElementById("admin-agregar").open = false;
+          mostrarEstadoAdmin("✓ Producto añadido correctamente a Firestore.");
+        } catch (error) {
+          console.error("Error al añadir en Firestore:", error);
+          const detalle = error.code === "permission-denied"
+            ? "Permiso denegado: El usuario no cuenta con autorización en la colección 'admins' de Firestore."
+            : (error.message || "Error al añadir a Firestore.");
+          mostrarEstadoAdmin("Error: " + detalle, true);
+          return;
+        }
+      } else {
+        producto.id = "demo-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+        MENU = [...MENU, producto];
+        if (!guardarMenu()) {
+          MENU = MENU.filter(item => item.id !== producto.id);
+          return;
+        }
+        formulario.reset();
+        quitarImagenNuevoProducto();
+        document.getElementById("admin-agregar").open = false;
+        mostrarEstadoAdmin("Producto añadido al menú local.");
+      }
+
+      renderizarAdmin();
+      renderizarProductos();
+    }
+
+    async function eliminarProducto(id) {
+      const producto = MENU.find(item => item.id === id);
+      if (!producto || !window.confirm("¿Eliminar " + producto.nombre + " del menú?")) {
+        return;
+      }
+
+      mostrarEstadoAdmin("Eliminando producto...", false);
+
+      if (window.eliminarProductoFirestore && window.usuarioAdminActual && window.usuarioAdminActual.autorizado) {
+        try {
+          await window.eliminarProductoFirestore(id);
+          mostrarEstadoAdmin("✓ Producto eliminado de Firestore.");
+        } catch (error) {
+          console.error("Error al eliminar de Firestore:", error);
+          const detalle = error.code === "permission-denied"
+            ? "Permiso denegado: El usuario no cuenta con autorización en la colección 'admins' de Firestore."
+            : (error.message || "Error al eliminar de Firestore.");
+          mostrarEstadoAdmin("Error: " + detalle, true);
+          return;
+        }
+      } else {
+        const anterior = MENU;
+        MENU = MENU.filter(item => item.id !== id);
+        if (!guardarMenu()) {
+          MENU = anterior;
+          return;
+        }
+        mostrarEstadoAdmin("Producto eliminado localmente.");
+      }
+
+      renderizarAdmin();
+      renderizarProductos();
+    }
+
+    function restablecerMenu() {
+      if (!window.confirm("¿Restablecer los productos y precios originales? Se descartarán los cambios locales del menú.")) {
+        return;
+      }
+      const anterior = MENU;
+      MENU = MENU_ORIGINAL.map(producto => ({ ...producto }));
+      if (!guardarMenu()) {
+        MENU = anterior;
+        return;
+      }
+      renderizarAdmin();
+      renderizarProductos();
+      mostrarEstadoAdmin("Menú restablecido a sus valores originales.");
+    }
+
+    function guardarProductos() {
+      try {
+        localStorage.setItem(CLAVE_CARRITO, JSON.stringify(productos));
+      } catch (error) {
+        console.error("No se pudo guardar el carrito en este dispositivo.", error);
+      }
+    }
+
+    function agregar(nombre, precio) {
+      const productoMenu = MENU.find(producto =>
+        producto.nombre === nombre && producto.precio === precio
+      );
+      if (!productoMenu || !productoMenu.disponible) {
+        return;
+      }
+      const existente = productos.find(producto =>
+        producto.nombre === nombre && producto.precio === precio
+      );
+      if (existente) {
+        existente.cantidad += 1;
+      } else {
+        productos.push({ nombre, precio, cantidad: 1 });
+      }
+      actualizarCarrito();
+    }
+
+    function quitar(indice) {
+      cambiarCantidad(indice, -1);
+    }
+
+    function cambiarCantidad(indice, delta) {
+      const producto = productos[indice];
+      if (!producto) {
+        return;
+      }
+      if (!Number.isSafeInteger(delta) || !Number.isSafeInteger(producto.cantidad)) return;
+      if (delta > 0 && producto.cantidad >= Number.MAX_SAFE_INTEGER) return;
+      const nuevaCantidad = producto.cantidad + delta;
+      if (nuevaCantidad <= 0) {
+        productos.splice(indice, 1);
+      } else {
+        producto.cantidad = nuevaCantidad;
+      }
+      actualizarCarrito();
+    }
+
+    function eliminarDelCarrito(indice) {
+      if (indice >= 0 && indice < productos.length) {
+        productos.splice(indice, 1);
+        actualizarCarrito();
+      }
+    }
+
+    function vaciarCarrito() {
+      productos = [];
+      actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+      guardarProductos();
+      total = productos.reduce((suma, producto) =>
+        suma + producto.precio * producto.cantidad, 0
+      );
+
+      const lista = document.getElementById("carrito");
+      lista.replaceChildren();
+
+      if (productos.length === 0) {
+        const vacio = document.createElement("p");
+        vacio.className = "carrito-vacio";
+        vacio.textContent = "Tu carrito está vacío. Vuelve al inicio para elegir algo rico.";
+        lista.appendChild(vacio);
+      }
+
+      productos.forEach((producto, indice) => {
+        const subtotal = producto.precio * producto.cantidad;
+        const fila = document.createElement("div");
+        fila.className = "fila-carrito";
+
+        const detalle = document.createElement("div");
+        const nombre = document.createElement("div");
+        nombre.className = "articulo-nombre";
+        nombre.textContent = producto.nombre;
+
+        const precio = document.createElement("div");
+        precio.className = "articulo-precio";
+        precio.textContent = "$" + producto.precio.toFixed(2) +
+          " c/u · Subtotal $" + subtotal.toFixed(2);
+        detalle.append(nombre, precio);
+
+        const controles = document.createElement("div");
+        controles.className = "controles-cantidad";
+
+        const menos = document.createElement("button");
+        menos.className = "boton-cantidad";
+        menos.type = "button";
+        menos.textContent = "−";
+        menos.setAttribute("aria-label", "Quitar una unidad de " + producto.nombre);
+        menos.onclick = () => cambiarCantidad(indice, -1);
+
+        const cantidad = document.createElement("span");
+        cantidad.className = "cantidad";
+        cantidad.textContent = String(producto.cantidad);
+        cantidad.setAttribute("aria-label", "Cantidad: " + producto.cantidad);
+
+        const mas = document.createElement("button");
+        mas.className = "boton-cantidad";
+        mas.type = "button";
+        mas.textContent = "+";
+        mas.setAttribute("aria-label", "Agregar una unidad de " + producto.nombre);
+        mas.onclick = () => cambiarCantidad(indice, 1);
+
+        const eliminar = document.createElement("button");
+        eliminar.className = "boton-eliminar-item";
+        eliminar.type = "button";
+        eliminar.innerHTML = "&times;";
+        eliminar.title = "Quitar " + producto.nombre + " del carrito";
+        eliminar.setAttribute("aria-label", "Quitar " + producto.nombre + " del carrito");
+        eliminar.onclick = () => eliminarDelCarrito(indice);
+
+        controles.append(menos, cantidad, mas, eliminar);
+        fila.append(detalle, controles);
+        lista.appendChild(fila);
+      });
+
+      document.getElementById("total").textContent = "$" + total.toFixed(2);
+      const unidades = productos.reduce((suma, producto) => suma + producto.cantidad, 0);
+      const contador = document.getElementById("contador-carrito");
+      contador.textContent = String(unidades);
+      contador.setAttribute(
+        "aria-label",
+        unidades + (unidades === 1 ? " producto en el carrito" : " productos en el carrito")
+      );
+      contador.classList.remove("bump");
+      void contador.offsetWidth;
+      contador.classList.add("bump");
+      const botonWhatsapp = document.getElementById("boton-whatsapp");
+      if (botonWhatsapp) {
+        botonWhatsapp.disabled = productos.length === 0;
+      }
+    }
+
+    function renderizarSkeletonProductos() {
+      const contenedor = document.getElementById("productos");
+      const tarjetas = Array.from({ length: 6 }, () => {
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "tarjeta-producto tarjeta-skeleton";
+        tarjeta.setAttribute("aria-hidden", "true");
+
+        const imagen = document.createElement("div");
+        imagen.className = "skeleton-bloque skeleton-imagen";
+
+        const contenido = document.createElement("div");
+        contenido.className = "skeleton-contenido";
+        ["skeleton-linea-categoria", "skeleton-linea-nombre", "skeleton-linea-descripcion", "skeleton-linea-descripcion skeleton-linea-descripcion-corta"]
+          .forEach(clase => {
+            const linea = document.createElement("div");
+            linea.className = "skeleton-bloque skeleton-linea " + clase;
+            contenido.appendChild(linea);
+          });
+
+        const pie = document.createElement("div");
+        pie.className = "skeleton-pie";
+        const precio = document.createElement("div");
+        precio.className = "skeleton-bloque skeleton-precio";
+        const boton = document.createElement("div");
+        boton.className = "skeleton-bloque skeleton-boton";
+        pie.append(precio, boton);
+
+        tarjeta.append(imagen, contenido, pie);
+        return tarjeta;
+      });
+      contenedor.replaceChildren(...tarjetas);
+    }
+
+    window.actualizarEstadoCargaMenu = function(estado) {
+      estadoCargaMenu = estado;
+      renderizarProductos();
+    };
+
+    function renderizarProductos() {
+      const contenedor = document.getElementById("productos");
+      contenedor.replaceChildren();
+
+      if (estadoCargaMenu === "cargando") {
+        document.getElementById("filtros-categoria").replaceChildren();
+        if (
+          !contenedor.firstElementChild ||
+          !contenedor.firstElementChild.classList.contains("tarjeta-skeleton")
+        ) {
+          renderizarSkeletonProductos();
+        }
+        return;
+      }
+
+      if (estadoCargaMenu !== "conectado") {
+        document.getElementById("filtros-categoria").replaceChildren();
+        return;
+      }
+
+      renderizarFiltros();
+      const normalizarBusqueda = texto => String(texto).normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es");
+      const consulta = normalizarBusqueda(document.getElementById("buscador").value.trim());
+      const coincidencias = MENU.filter(producto => {
+        const coincideCategoria =
+          categoriaActual === "Todos" || producto.categoria === categoriaActual;
+        const coincideBusqueda =
+          (producto.nombre + " " + producto.descripcion + " " + producto.categoria)
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es")
+            .includes(consulta);
+        return coincideCategoria && coincideBusqueda;
+      });
+
+      if (coincidencias.length === 0) {
+        const mensaje = document.createElement("p");
+        mensaje.className = "sin-resultados";
+        mensaje.textContent = MENU.length === 0
+          ? "Todavía no hay productos disponibles."
+          : "No encontramos productos con esa búsqueda.";
+        contenedor.appendChild(mensaje);
+        return;
+      }
+
+      coincidencias.forEach(producto => {
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "tarjeta-producto";
+
+        const imagen = document.createElement("img");
+        imagen.className = "producto-imagen";
+        imagen.src = producto.imagen;
+        imagen.alt = producto.alt;
+        imagen.loading = "lazy";
+
+        const abrir = document.createElement("button");
+        abrir.className = "producto-abrir";
+        abrir.type = "button";
+        abrir.setAttribute("aria-label", "Ver detalle de " + producto.nombre);
+        abrir.onclick = () => verDetalle(producto.nombre);
+
+        const contenido = document.createElement("div");
+        contenido.className = "producto-contenido";
+        const nombre = document.createElement("span");
+        nombre.className = "producto-nombre";
+        nombre.textContent = producto.nombre;
+        const descripcion = document.createElement("span");
+        descripcion.className = "producto-descripcion";
+        descripcion.textContent = producto.descripcion;
+        contenido.append(nombre, descripcion);
+        abrir.appendChild(contenido);
+
+        const pie = document.createElement("div");
+        pie.className = "producto-pie";
+        const precio = document.createElement("span");
+        precio.className = "precio";
+        precio.textContent = "$" + producto.precio.toFixed(2);
+        if (producto.disponible) {
+          const agregarRapido = document.createElement("button");
+          agregarRapido.className = "agregar-rapido";
+          agregarRapido.type = "button";
+          agregarRapido.textContent = "+";
+          agregarRapido.setAttribute("aria-label", "Agregar " + producto.nombre + " al carrito");
+          agregarRapido.onclick = () => agregar(producto.nombre, producto.precio);
+          pie.append(precio, agregarRapido);
+        } else {
+          const noDisponible = document.createElement("span");
+          noDisponible.className = "producto-no-disponible";
+          noDisponible.textContent = "No disponible";
+          pie.append(precio, noDisponible);
+        }
+
+        tarjeta.append(imagen, abrir, pie);
+        contenedor.appendChild(tarjeta);
+      });
+    }
+
+    function renderizarFiltros() {
+      const categorias = [...new Set(MENU.map(producto => producto.categoria))]
+        .filter(categoria => typeof categoria === "string" && categoria.trim() !== "")
+        .sort((a, b) => a.localeCompare(b, "es"));
+      if (categoriaActual !== "Todos" && !categorias.includes(categoriaActual)) {
+        categoriaActual = "Todos";
+      }
+
+      const contenedor = document.getElementById("filtros-categoria");
+      contenedor.replaceChildren();
+      ["Todos", ...categorias].forEach(categoria => {
+        const boton = document.createElement("button");
+        boton.className = "filtro";
+        boton.type = "button";
+        boton.dataset.categoria = categoria;
+        boton.setAttribute("aria-pressed", String(categoria === categoriaActual));
+        boton.textContent = categoria;
+        contenedor.appendChild(boton);
+      });
+    }
+
+    function verDetalle(nombre) {
+      productoSeleccionado = MENU.find(producto => producto.nombre === nombre);
+      if (!productoSeleccionado) {
+        return;
+      }
+
+      const articulo = document.getElementById("detalle-producto");
+      articulo.replaceChildren();
+
+      const imagen = document.createElement("img");
+      imagen.className = "detalle-imagen";
+      imagen.src = productoSeleccionado.imagen;
+      imagen.alt = productoSeleccionado.alt;
+
+      const contenido = document.createElement("div");
+      contenido.className = "detalle-contenido";
+      const categoria = document.createElement("span");
+      categoria.className = "eyebrow";
+      categoria.textContent = productoSeleccionado.categoria;
+      const titulo = document.createElement("h2");
+      titulo.id = "detalle-nombre";
+      titulo.tabIndex = -1;
+      titulo.textContent = productoSeleccionado.nombre;
+      const descripcion = document.createElement("p");
+      descripcion.className = "detalle-descripcion";
+      descripcion.textContent = productoSeleccionado.descripcion;
+      const precio = document.createElement("div");
+      precio.className = "detalle-precio";
+      precio.textContent = "$" + productoSeleccionado.precio.toFixed(2);
+      const boton = document.createElement("button");
+      boton.className = "boton";
+      boton.type = "button";
+      boton.textContent = productoSeleccionado.disponible
+        ? "Agregar al carrito"
+        : "No disponible";
+      boton.disabled = !productoSeleccionado.disponible;
+      boton.onclick = () => {
+        agregar(productoSeleccionado.nombre, productoSeleccionado.precio);
+        irA("carrito");
+      };
+      contenido.append(categoria, titulo, descripcion, precio, boton);
+      articulo.append(imagen, contenido);
+      irA("detalle");
+    }
+
+    async function irA(vista) {
+      const vistas = ["inicio", "detalle", "carrito", "admin"];
+      if (!vistas.includes(vista) || vista === vistaActual) {
+        return;
+      }
+
+      if (vista === "admin" && (!window.usuarioAdminActual || !window.usuarioAdminActual.autorizado)) {
+        abrirModalLoginAdmin();
+        return;
+      }
+
+      const token = ++tokenTransicionVista;
+      const anterior = document.getElementById("vista-" + vistaActual);
+      const destino = document.getElementById("vista-" + vista);
+      vistas.forEach(nombre => {
+        const elemento = document.getElementById("vista-" + nombre);
+        if (elemento !== anterior && elemento !== destino) {
+          elemento.hidden = true;
+          elemento.inert = true;
+          elemento.classList.remove("saliendo", "entrando");
+        }
+      });
+      destino.hidden = false;
+      destino.inert = false;
+      destino.classList.remove("saliendo");
+      destino.classList.add("entrando");
+      anterior.inert = true;
+
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          destino.classList.remove("entrando");
+          anterior.classList.add("saliendo");
+        });
+      });
+
+      vistaActual = vista;
+      if (vista === "admin" && window.iniciarEscuchaPedidos && window.usuarioAdminActual && window.usuarioAdminActual.autorizado) {
+        window.iniciarEscuchaPedidos();
+      }
+      if (vista !== "admin" && vista !== "detalle") {
+        document.getElementById("nav-interior").dataset.active =
+          vista === "carrito" ? "carrito" : "inicio";
+      }
+      const navInicio = document.getElementById("nav-inicio");
+      const navCarrito = document.getElementById("nav-carrito");
+      const navAdmin = document.getElementById("nav-admin");
+      if (vista === "inicio") {
+        navInicio.setAttribute("aria-current", "page");
+      } else {
+        navInicio.removeAttribute("aria-current");
+      }
+      if (vista === "carrito") {
+        navCarrito.setAttribute("aria-current", "page");
+      } else {
+        navCarrito.removeAttribute("aria-current");
+      }
+      if (vista === "admin") {
+        navAdmin.setAttribute("aria-current", "page");
+      } else {
+        navAdmin.removeAttribute("aria-current");
+      }
+      const encabezado = document.getElementById(
+        vista === "detalle" ? "detalle-nombre" :
+          vista === "carrito" ? "titulo-carrito" :
+            vista === "admin" ? "titulo-admin" : "titulo-inicio"
+      );
+      encabezado.focus({ preventScroll: true });
+
+      await new Promise(resolve => window.setTimeout(resolve, 300));
+      if (token !== tokenTransicionVista) {
+        return;
+      }
+      anterior.hidden = true;
+      anterior.inert = true;
+      anterior.classList.remove("saliendo");
+      destino.inert = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    window.usuarioAdminActual = null;
+
+    function manejarBotonAdmin() {
+      if (window.usuarioAdminActual && window.usuarioAdminActual.autorizado) {
+        irA("admin");
+      } else {
+        abrirModalLoginAdmin();
+      }
+    }
+
+    function abrirModalLoginAdmin() {
+      const modal = document.getElementById("modal-login-admin");
+      if (!modal) return;
+      modal.hidden = false;
+      const errorBox = document.getElementById("admin-login-error");
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+      const emailInput = document.getElementById("admin-email");
+      if (emailInput) {
+        emailInput.focus();
+      }
+    }
+
+    function cerrarModalLoginAdmin() {
+      const modal = document.getElementById("modal-login-admin");
+      if (!modal) return;
+      modal.hidden = true;
+      const errorBox = document.getElementById("admin-login-error");
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+      const navAdmin = document.getElementById("nav-admin");
+      if (navAdmin) {
+        navAdmin.focus();
+      }
+    }
+
+    async function cerrarSesionAdmin() {
+      if (window.ejecutarLogoutAdmin) {
+        await window.ejecutarLogoutAdmin();
+      } else {
+        window.usuarioAdminActual = null;
+      }
+      irA("inicio");
+    }
+
+    window.addEventListener("keydown", evento => {
+      if (evento.key === "Escape") {
+        const modal = document.getElementById("modal-login-admin");
+        if (modal && !modal.hidden) {
+          cerrarModalLoginAdmin();
+        }
+      }
+    });
+
+    function guardarDatosCliente() {
+      try {
+        const nombreInput = document.getElementById("nombre-cliente");
+        const telefonoInput = document.getElementById("telefono-cliente");
+        const tipoEntregaSelect = document.getElementById("tipo-entrega");
+        const direccionInput = document.getElementById("direccion");
+        const observacionesInput = document.getElementById("observaciones-pedido");
+
+        const datos = {
+          nombre: nombreInput ? nombreInput.value : "",
+          telefono: telefonoInput ? telefonoInput.value : "",
+          tipoEntrega: tipoEntregaSelect ? tipoEntregaSelect.value : "domicilio",
+          direccion: direccionInput ? direccionInput.value : "",
+          observaciones: observacionesInput ? observacionesInput.value : ""
+        };
+        localStorage.setItem(CLAVE_CLIENTE, JSON.stringify(datos));
+      } catch (error) {
+        console.error("No se pudieron guardar los datos del cliente.", error);
+      }
+    }
+
+    function cargarDatosCliente() {
+      let guardados;
+      try {
+        guardados = localStorage.getItem(CLAVE_CLIENTE);
+      } catch (error) {
+        console.error("No se pudieron leer los datos del cliente.", error);
+        return;
+      }
+
+      if (!guardados) {
+        return;
+      }
+
+      try {
+        const datos = JSON.parse(guardados);
+        if (datos && typeof datos === "object") {
+          const nombreInput = document.getElementById("nombre-cliente");
+          const telefonoInput = document.getElementById("telefono-cliente");
+          const tipoEntregaSelect = document.getElementById("tipo-entrega");
+          const direccionInput = document.getElementById("direccion");
+          const observacionesInput = document.getElementById("observaciones-pedido");
+
+          if (nombreInput && typeof datos.nombre === "string") {
+            nombreInput.value = datos.nombre;
+          }
+          if (telefonoInput && typeof datos.telefono === "string") {
+            telefonoInput.value = datos.telefono;
+          }
+          if (tipoEntregaSelect && (datos.tipoEntrega === "domicilio" || datos.tipoEntrega === "retiro")) {
+            tipoEntregaSelect.value = datos.tipoEntrega;
+          }
+          if (direccionInput && typeof datos.direccion === "string") {
+            direccionInput.value = datos.direccion;
+          }
+          if (observacionesInput && typeof datos.observaciones === "string") {
+            observacionesInput.value = datos.observaciones;
+          }
+        }
+      } catch (error) {
+        console.error("Los datos del cliente guardados tienen un formato no válido.", error);
+      }
+    }
+
+    function actualizarTipoEntrega() {
+      const select = document.getElementById("tipo-entrega");
+      const esDomicilio = select ? select.value === "domicilio" : true;
+      const campo = document.getElementById("campo-direccion");
+      const direccion = document.getElementById("direccion");
+      if (campo) {
+        campo.hidden = !esDomicilio;
+      }
+      if (direccion) {
+        direccion.required = esDomicilio;
+      }
+      guardarDatosCliente();
+    }
+
+    let guardandoPedido = false;
+
+    window.cambiarPestanaAdmin = function(pestana) {
+      const seccionPedidos = document.getElementById("admin-seccion-pedidos");
+      const seccionProductos = document.getElementById("admin-seccion-productos");
+      const tabPedidos = document.getElementById("pestana-admin-pedidos");
+      const tabProductos = document.getElementById("pestana-admin-productos");
+
+      if (pestana === "pedidos") {
+        if (seccionPedidos) seccionPedidos.hidden = false;
+        if (seccionProductos) seccionProductos.hidden = true;
+        if (tabPedidos) {
+          tabPedidos.classList.add("activa");
+          tabPedidos.setAttribute("aria-selected", "true");
+        }
+        if (tabProductos) {
+          tabProductos.classList.remove("activa");
+          tabProductos.setAttribute("aria-selected", "false");
+        }
+      } else {
+        if (seccionPedidos) seccionPedidos.hidden = true;
+        if (seccionProductos) seccionProductos.hidden = false;
+        if (tabPedidos) {
+          tabPedidos.classList.remove("activa");
+          tabPedidos.setAttribute("aria-selected", "false");
+        }
+        if (tabProductos) {
+          tabProductos.classList.add("activa");
+          tabProductos.setAttribute("aria-selected", "true");
+        }
+      }
+    };
+
+    async function pedir() {
+      alert("Vista previa: no se envían pedidos ni mensajes a WhatsApp.");
+      return;
+      if (guardandoPedido) {
+        return; // Prevenir envíos duplicados por clics múltiples
+      }
+
+      if (!productos || productos.length === 0) {
+        alert("Tu carrito está vacío. Agrega al menos un producto para realizar tu pedido.");
+        irA("inicio");
+        return;
+      }
+
+      const nombreInput = document.getElementById("nombre-cliente");
+      const telefonoInput = document.getElementById("telefono-cliente");
+      const tipoEntregaSelect = document.getElementById("tipo-entrega");
+      const direccionInput = document.getElementById("direccion");
+      const observacionesInput = document.getElementById("observaciones-pedido");
+      const botonWhatsapp = document.getElementById("boton-whatsapp");
+      const feedbackBox = document.getElementById("pedido-feedback");
+      const errorBox = document.getElementById("pedido-error");
+
+      if (feedbackBox) {
+        feedbackBox.hidden = true;
+        feedbackBox.textContent = "";
+      }
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+
+      const nombre = (nombreInput ? nombreInput.value : "").trim();
+      const telefono = (telefonoInput ? telefonoInput.value : "").trim();
+      const tipoEntrega = tipoEntregaSelect ? tipoEntregaSelect.value : "domicilio";
+      const direccion = (direccionInput ? direccionInput.value : "").trim();
+      const observaciones = (observacionesInput ? observacionesInput.value : "").trim();
+
+      if (!nombre) {
+        alert("Por favor, ingresa tu nombre completo para continuar.");
+        if (nombreInput) {
+          nombreInput.focus();
+        }
+        return;
+      }
+
+      const digitosTelefono = telefono.replace(/\D/g, "");
+      if (!telefono || digitosTelefono.length < 7) {
+        alert("Por favor, ingresa un número de teléfono de contacto válido (mínimo 7 dígitos).");
+        if (telefonoInput) {
+          telefonoInput.focus();
+        }
+        return;
+      }
+
+      if (tipoEntrega === "domicilio" && !direccion) {
+        alert("Por favor, ingresa tu dirección de entrega (calle, número y referencia).");
+        if (direccionInput) {
+          direccionInput.focus();
+        }
+        return;
+      }
+
+      guardarDatosCliente();
+
+      // Bloquear botón e iniciar guardado en Firestore para evitar pedidos duplicados
+      guardandoPedido = true;
+      if (botonWhatsapp) {
+        botonWhatsapp.disabled = true;
+        botonWhatsapp.innerHTML = '<span>Registrando pedido en el sistema...</span>';
+      }
+
+      // Preparar lista de productos
+      const productosPedido = productos.map(producto => ({
+        nombre: producto.nombre,
+        precio: Number(producto.precio),
+        cantidad: Number(producto.cantidad),
+        subtotal: Number((producto.precio * producto.cantidad).toFixed(2))
+      }));
+      const totalPedido = Number(total.toFixed(2));
+
+      const datosPedido = {
+        cliente: nombre,
+        telefono: digitosTelefono,
+        tipoEntrega: tipoEntrega,
+        direccion: tipoEntrega === "domicilio" ? direccion : "",
+        observaciones: observaciones,
+        productos: productosPedido,
+        total: totalPedido,
+        estado: "Pendiente", // Estado inicial: pendiente de confirmación por el negocio
+        fecha: new Date().toISOString()
+      };
+
+      let pedidoId = "";
+      try {
+        if (!window.guardarPedidoFirestoreDirecto) {
+          throw new Error("El servicio de base de datos no está disponible.");
+        }
+        pedidoId = await window.guardarPedidoFirestoreDirecto(datosPedido);
+      } catch (error) {
+        console.error("Error al registrar pedido en Firestore:", error);
+        guardandoPedido = false;
+        if (botonWhatsapp) {
+          botonWhatsapp.disabled = false;
+          botonWhatsapp.innerHTML = 'Enviar pedido por WhatsApp <span aria-hidden="true">↗</span>';
+        }
+
+        let mensajeError = "No se pudo registrar tu pedido en el sistema.";
+        if (error.code === "permission-denied") {
+          mensajeError = "No se pudo guardar el pedido por permisos de Firestore. Asegúrate de publicar las reglas de seguridad en Firebase Console.";
+        } else if (error.message) {
+          mensajeError = "Error: " + error.message;
+        }
+
+        if (errorBox) {
+          errorBox.innerHTML = "<strong>Error al procesar pedido:</strong><br>" + escapeHtml(mensajeError);
+          errorBox.hidden = false;
+        }
+        alert(mensajeError + "\n\nEl pedido NO se envió por WhatsApp para evitar inconsistencias.");
+        return; // DETENER: no abrir WhatsApp si falla el guardado
+      }
+
+      // Pedido validado y guardado en Firestore
+      const refPedido = pedidoId ? pedidoId.slice(0, 8).toUpperCase() : "REGISTRADO";
+
+      const lineas = [
+        "👋 ¡Hola! Quiero realizar el siguiente pedido en *Domingo Food*:",
+        ""
+      ];
+
+      if (refPedido) {
+        lineas.push("🔖 *Ref. Pedido:* #" + refPedido);
+      }
+
+      lineas.push(
+        "📋 *DATOS DEL CLIENTE*",
+        "• *Nombre:* " + nombre,
+        "• *Teléfono:* " + telefono,
+        "• *Modalidad:* " + (tipoEntrega === "domicilio" ? "Entrega a domicilio 🛵" : "Retiro en el local 🏪")
+      );
+
+      if (tipoEntrega === "domicilio") {
+        lineas.push("• *Dirección:* " + direccion);
+      }
+
+      if (observaciones) {
+        lineas.push("• *Observaciones:* " + observaciones);
+      }
+
+      lineas.push(
+        "",
+        "🛒 *DETALLE DEL PEDIDO*"
+      );
+
+      productos.forEach(producto => {
+        const subtotal = producto.precio * producto.cantidad;
+        lineas.push(
+          "• " + producto.cantidad + "x " + producto.nombre + " — $" + producto.precio.toFixed(2) + " c/u ($" + subtotal.toFixed(2) + ")"
+        );
+      });
+
+      lineas.push(
+        "",
+        "💰 *TOTAL A PAGAR:* $" + totalPedido.toFixed(2),
+        "⏳ *Estado:* Pendiente de confirmación por el negocio",
+        "",
+        "Quedo a la espera de su confirmación. ¡Muchas gracias!"
+      );
+
+      const numeroNegocioLimpio = WHATSAPP_NEGOCIO.replace(/\D/g, "");
+      const destino = numeroNegocioLimpio
+        ? "https://wa.me/" + numeroNegocioLimpio
+        : "https://wa.me/";
+
+      window.open(
+        destino + "?text=" + encodeURIComponent(lineas.join("\n")),
+        "_blank",
+        "noopener,noreferrer"
+      );
+
+      // Vaciar carrito tras registro exitoso
+      vaciarCarrito();
+
+      if (feedbackBox) {
+        feedbackBox.innerHTML = "<strong>✓ ¡Pedido registrado con éxito!</strong><br>Código de referencia: <code>#" + refPedido + "</code>.<br>Total: <strong>$" + totalPedido.toFixed(2) + "</strong>.<br>Estado actual: <strong>Pendiente de confirmación por el negocio</strong>.<br>Se abrió WhatsApp con el resumen de tu compra.";
+        feedbackBox.hidden = false;
+      }
+
+      guardandoPedido = false;
+      if (botonWhatsapp) {
+        botonWhatsapp.disabled = true; // El carrito ya está vacío
+        botonWhatsapp.innerHTML = 'Enviar pedido por WhatsApp <span aria-hidden="true">↗</span>';
+      }
+    }
+
+    document.getElementById("buscador").addEventListener("input", renderizarProductos);
+    document.getElementById("filtros-categoria").addEventListener("click", evento => {
+      const boton = evento.target.closest("button[data-categoria]");
+      if (!boton) {
+        return;
+      }
+      categoriaActual = boton.dataset.categoria;
+      renderizarProductos();
+    });
+    document.getElementById("tipo-entrega").addEventListener("change", actualizarTipoEntrega);
+    const formPedido = document.getElementById("formulario-pedido");
+    if (formPedido) {
+      formPedido.addEventListener("input", guardarDatosCliente);
+      formPedido.addEventListener("submit", evento => {
+        evento.preventDefault();
+        pedir();
+      });
+    }
+    document.getElementById("formulario-nuevo-producto").addEventListener("submit", agregarProductoAdmin);
+
+    window.aplicarMenuFirestore = function(menuFirestore) {
+      MENU = menuFirestore.map(producto => ({
+        ...producto,
+        imagen: producto.imagen.trim() || MENU_ORIGINAL[0].imagen
+      }));
+      estadoCargaMenu = "conectado";
+      renderizarProductos();
+      renderizarAdmin();
+    };
+
+    MENU = cargarMenu();
+    productos = cargarProductos();
+    renderizarProductos();
+    renderizarAdmin();
+    cargarDatosCliente();
+    actualizarTipoEntrega();
+    actualizarCarrito();
+  </script>
+  <!-- Vista previa aislada: sin SDK, credenciales, autenticación ni escrituras Firebase. -->
+  <script>
+    window.usuarioAdminActual = null;
+    window.guardarPedidoFirestoreDirecto = async () => { throw new Error("Vista previa: pedidos deshabilitados."); };
+    window.guardarPedidoFirestore = window.guardarPedidoFirestoreDirecto;
+    window.guardarProductoFirestore = async () => { throw new Error("Vista previa: escritura deshabilitada."); };
+    window.agregarProductoFirestore = window.guardarProductoFirestore;
+    window.eliminarProductoFirestore = window.guardarProductoFirestore;
+    window.actualizarEstadoPedidoFirestore = window.guardarProductoFirestore;
+    document.getElementById("estado-firestore").textContent = "Modo demostración: catálogo local, sin conexión a Firebase.";
+    document.getElementById("estado-firestore").dataset.estado = "conectado";
+    document.getElementById("reintentar-firestore").hidden = true;
+    window.actualizarEstadoCargaMenu("conectado");
+    document.getElementById("boton-whatsapp").disabled = true;
+    document.getElementById("boton-whatsapp").textContent = "Pedidos deshabilitados en la vista previa";
+  </script>
+
+</body>
+</html>
